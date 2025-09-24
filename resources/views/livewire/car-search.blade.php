@@ -43,7 +43,7 @@
 
                     <div class="mt-4 d-flex justify-content-between align-items-center">
                         <small class="text-muted">
-                            <i class="fas fa-info-circle me-1"></i> 
+                            <i class="fas fa-info-circle me-1"></i>
                             Use filters to narrow down your search
                         </small>
                         <button class="btn btn-outline-secondary" wire:click="resetFilters">
@@ -87,12 +87,14 @@
                     <div class="card-body d-flex flex-column p-3">
                         <!-- Car Details -->
                         <h5 class="card-title mb-2">{{ $car->brand }} {{ $car->model }}</h5>
-                        <p class="text-muted small mb-3">{{ $car->year }} • {{ $car->fuel }} • {{ $car->transmission }}</p>
+                        <p class="text-muted small mb-3">{{ $car->year }} • {{ $car->fuel }} •
+                            {{ $car->transmission }}</p>
 
                         <div class="mb-3">
                             <div class="d-flex align-items-center mb-2">
                                 <i class="fas fa-tag text-primary me-2"></i>
-                                <span class="fw-bold fs-5 text-dark">₱{{ number_format($car->price_per_day, 2) }} <small class="text-muted">/day</small></span>
+                                <span class="fw-bold fs-5 text-dark">₱{{ number_format($car->price_per_day, 2) }}
+                                    <small class="text-muted">/day</small></span>
                             </div>
 
                             <!-- Car Features -->
@@ -112,12 +114,14 @@
                         <!-- Book Button -->
                         <div class="mt-auto">
                             @if ($isAvailable)
-                                <button class="btn btn-primary w-100 d-flex align-items-center justify-content-center py-2"
+                                <button
+                                    class="btn btn-primary w-100 d-flex align-items-center justify-content-center py-2"
                                     wire:click="$dispatch('openBookingModal', { carId: {{ $car->id }} })">
                                     <i class="fas fa-calendar-check me-2"></i> Book Now
                                 </button>
                             @else
-                                <button class="btn btn-secondary w-100 d-flex align-items-center justify-content-center py-2"
+                                <button
+                                    class="btn btn-secondary w-100 d-flex align-items-center justify-content-center py-2"
                                     disabled>
                                     <i class="fas fa-calendar-times me-2"></i> Unavailable
                                 </button>

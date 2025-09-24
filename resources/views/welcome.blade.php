@@ -20,7 +20,7 @@
 
         .feature-icon {
             font-size: 2.5rem;
-            color: #0d6efd;
+            color: #6f42c1;
             margin-bottom: 1rem;
         }
 
@@ -43,7 +43,7 @@
         }
 
         .feedback-card {
-            border-left: 4px solid #0d6efd;
+            border-left: 4px solid #6f42c1;
         }
 
         .contact-info i {
@@ -52,7 +52,7 @@
             line-height: 40px;
             text-align: center;
             border-radius: 50%;
-            background-color: #0d6efd;
+            background-color: #6f42c1;
             color: white;
             margin-right: 15px;
         }
@@ -65,7 +65,7 @@
 
         .contact-form .form-control:focus {
             box-shadow: none;
-            border-color: #0d6efd;
+            border-color: #6f42c1;
         }
 
         .btn-primary {
@@ -81,7 +81,7 @@
         .stats-number {
             font-size: 2.5rem;
             font-weight: bold;
-            color: #0d6efd;
+            color: green;
         }
     </style>
 </head>
@@ -123,7 +123,8 @@
         <div class="container">
             <h1 class="display-4 fw-bold">Drive Your Dream Car Today</h1>
             <p class="lead">Affordable vehicles at resonable prices. No account needed to book.</p>
-            <a href="/searchcar" class="btn btn-primary btn-lg mt-3">Browse Available Cars</a>
+            <a href="/searchcar" class="btn btn-primary btn-lg mt-3"
+                style="background-color: #6f42c1; border-color: #6f42c1;">Browse Available Cars</a>
         </div>
     </section>
 
@@ -155,14 +156,6 @@
             </div>
         </div>
     </section>
-
-    <!-- Available Cars Section -->
-    {{-- <section id="available-cars" class="py-5 bg-light">
-        <div class="container">
-            <h2 class="text-center mb-5">Available Cars</h2>
-            @livewire('car-search')
-        </div>
-    </section> --}}
 
     <!-- About Us Section -->
     <section id="about" class="section-padding">
@@ -268,11 +261,12 @@
             <div class="row mt-5">
                 <div class="col-lg-8 mx-auto">
                     <div class="card">
-                        <div class="card-header bg-primary text-white">
+                        <div class="card-header text-white" style="background-color:#6f42c1;">
                             <h4 class="mb-0">Share Your Experience</h4>
                         </div>
                         <div class="card-body">
                             <form>
+                                @csrf
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="name" class="form-label">Your Name</label>
@@ -281,6 +275,9 @@
                                     <div class="col-md-6 mb-3">
                                         <label for="email" class="form-label">Email Address</label>
                                         <input type="email" class="form-control" id="email" required>
+                                        {{-- @error('email')
+                                            <div class="text-danger small">{{ $message }}</div>
+                                        @enderror --}}
                                     </div>
                                 </div>
                                 <div class="mb-3">
@@ -296,7 +293,7 @@
                                     <label for="message" class="form-label">Your Feedback</label>
                                     <textarea class="form-control" id="message" rows="4" required></textarea>
                                 </div>
-                                <button type="submit" class="btn btn-primary">Submit Feedback</button>
+                                <button type="submit" class="btn btn-secondary">Submit Feedback</button>
                             </form>
                         </div>
                     </div>
@@ -373,7 +370,7 @@
                                 <label for="contact-message" class="form-label">Message</label>
                                 <textarea class="form-control" id="contact-message" rows="5" required></textarea>
                             </div>
-                            <button type="submit" class="btn btn-primary">Send Message</button>
+                            <button type="submit" class="btn btn-secondary">Send Message</button>
                         </form>
                     </div>
                 </div>

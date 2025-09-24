@@ -5,10 +5,12 @@ use App\Livewire\Admin\AddCars;
 use App\Livewire\Admin\ManageBooking;
 use App\Livewire\Admin\Dashboard;
 use App\Livewire\CarSearch;
+use App\Livewire\LandingPage;
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('welcome');
+// Route::get('/', function () {
+//     return view('welcome');
+// })->name('welcome');
+Route::get('/', LandingPage::class)->name('welcome');
 
 Route::middleware([
     'auth:sanctum',
