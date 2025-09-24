@@ -16,7 +16,9 @@ class CarsModel extends Model
 
     protected $fillable = [
         'brand',
-        'model',
+        'transmission',
+        'setting_capacity',
+        'fuel',
         'year',
         'price_per_day',
         'image',

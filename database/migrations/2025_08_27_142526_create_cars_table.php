@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create('cars', function (Blueprint $table) {
             $table->id();
             $table->string('brand');
-            $table->string('model');
+            $table->string('transmission');
+            $table->string('setting_capacity');
+            $table->string('fuel');
             $table->integer('year');
             $table->decimal('price_per_day', 10, 2);
             $table->string('image')->nullable();

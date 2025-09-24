@@ -23,8 +23,7 @@ class CarSearch extends Component
         // Apply brand filter
         if (!empty($this->searchBrand)) {
             $query->where(function ($q) {
-                $q->where('brand', 'like', '%' . $this->searchBrand . '%')
-                ->orWhere('model','like','%' . $this->searchBrand . '%');
+                $q->where('brand', 'like', '%' . $this->searchBrand . '%');
             });
         }
 

@@ -12,7 +12,7 @@ class AddCars extends Component
 {
     use WithPagination, WithFileUploads;
 
-    public $carId, $brand, $model, $year, $price_per_day, $status = 'available', $image, $existingImage;
+    public $carId, $brand,$transmission,$setting_capacity,$fuel, $year, $price_per_day, $status = 'available', $image, $existingImage;
     public $showModal = false, $modalTitle = 'Add New Car', $editMode = false;
 
     protected $paginationTheme = 'bootstrap';
@@ -21,7 +21,9 @@ class AddCars extends Component
     {
         return [
             'brand'  => 'required|string|max:255',
-            'model'  => 'required|string|max:255',
+            'transmission'  => 'required|string|max:255',
+            'setting_capacity'  => 'required|string|max:255',
+            'fuel'  => 'required|string|max:255',
             'year'   => ['required', 'integer', 'min:1900', 'max:' . (date('Y') + 1)],
             'price_per_day' => 'required|numeric|min:0',
             'status' => 'required|in:available,unavailable',
@@ -43,7 +45,9 @@ class AddCars extends Component
         $car = CarsModel::findOrFail($id);
         $this->carId = $car->id;
         $this->brand = $car->brand;
-        $this->model = $car->model;
+        $this->transmission = $car->transmission;
+        $this->setting_capacity = $car->setting_capacity;
+        $this->fuel = $car->fuel;
         $this->year = $car->year;
         $this->price_per_day = $car->price_per_day;
         $this->status = $car->status;
@@ -89,7 +93,9 @@ class AddCars extends Component
     {
         $data = [
             'brand' => $this->brand,
-            'model' => $this->model,
+            'transmission' => $this->transmission,
+            'setting_capacity' => $this->setting_capacity,
+            'fuel' => $this->fuel,
             'year' => $this->year,
             'price_per_day' => $this->price_per_day,
             'status' => $this->status,
