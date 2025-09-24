@@ -44,7 +44,7 @@ class CarSearch extends Component
 
         $cars = $query->paginate(8);
 
-        return view('livewire.car-search',['cars' => $cars,'searchStartDate' => $this->searchStartDate,'searchEndDate' => $this->searchEndDate])->layout('layouts.app');
+        return view('livewire.car-search',['cars' => $cars,'searchStartDate' => $this->searchStartDate,'searchEndDate' => $this->searchEndDate])->layout('layouts.search-car');
     }
 
     public function resetFilters()

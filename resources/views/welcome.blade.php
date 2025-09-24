@@ -102,7 +102,7 @@
                         <a class="nav-link" href="#home">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#available-cars">Cars</a>
+                        <a class="nav-link" href="/searchcar">Cars</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#about">About Us</a>
@@ -123,7 +123,7 @@
         <div class="container">
             <h1 class="display-4 fw-bold">Drive Your Dream Car Today</h1>
             <p class="lead">Affordable vehicles at resonable prices. No account needed to book.</p>
-            <a href="#available-cars" class="btn btn-primary btn-lg mt-3">Browse Available Cars</a>
+            <a href="/searchcar" class="btn btn-primary btn-lg mt-3">Browse Available Cars</a>
         </div>
     </section>
 
@@ -157,12 +157,12 @@
     </section>
 
     <!-- Available Cars Section -->
-    <section id="available-cars" class="py-5 bg-light">
+    {{-- <section id="available-cars" class="py-5 bg-light">
         <div class="container">
             <h2 class="text-center mb-5">Available Cars</h2>
             @livewire('car-search')
         </div>
-    </section>
+    </section> --}}
 
     <!-- About Us Section -->
     <section id="about" class="section-padding">

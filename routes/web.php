@@ -4,10 +4,11 @@ use Illuminate\Support\Facades\Route;
 use App\Livewire\Admin\AddCars;
 use App\Livewire\Admin\ManageBooking;
 use App\Livewire\Admin\Dashboard;
+use App\Livewire\CarSearch;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('welcome');
 
 Route::middleware([
     'auth:sanctum',
@@ -20,5 +21,6 @@ Route::middleware([
     Route::get('/dashboard',Dashboard::class)->name('admin.dashboard');
 });
 
+Route::get('/searchcar',CarSearch::class)->name('car-search');
 Route::get('/addcars',AddCars::class)->name('admin.add-cars');
 Route::get('/manageBooking',ManageBooking::class)->name('admin.manage-booking');
