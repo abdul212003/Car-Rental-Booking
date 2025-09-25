@@ -20,6 +20,8 @@ return new class extends Migration
             $table->integer('year');
             $table->decimal('price_per_day', 10, 2);
             $table->string('image')->nullable();
+            $table->string('interior_image')->nullable();
+            $table->string('additional_image')->nullable();
             $table->enum('status', ['available', 'unavailable'])->default('available');
             $table->timestamps();
         });

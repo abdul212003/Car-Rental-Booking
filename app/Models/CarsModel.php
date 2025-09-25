@@ -22,6 +22,8 @@ class CarsModel extends Model
         'year',
         'price_per_day',
         'image',
+        'interior_image',
+        'additional_image',
         'status',
     ];
 
