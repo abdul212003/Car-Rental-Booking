@@ -23,6 +23,7 @@ return new class extends Migration
             $table->integer('total_days');
             $table->decimal('total_cost', 10, 2);
             $table->string('gcash_reference_number')->nullable();
+            $table->string('requirements_valid_id_photo');
             $table->string('gcash_receipt')->nullable(); // Path to uploaded image
             $table->enum('status', ['pending', 'confirmed', 'cancelled'])->default('pending');
             $table->timestamps();

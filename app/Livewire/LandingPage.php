@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use App\Models\CustomerFeedBackModel;
+use App\Models\ContactUsModel;
 
 class LandingPage extends Component
 {
@@ -12,25 +13,37 @@ class LandingPage extends Component
     public $rating;
     public $message;
 
-    protected $rules = [
-        'name' => 'required|max:255',
-        'email' => 'required|email',
-        'rating' => 'required',
-        'message' => 'required|min:5',
-    ];
+    public $contact_name,$contact_email,$contact_subject,$contact_message;
 
-    // protected $messages = [
-    //     'name.required' => 'Please enter your name.',
-    //     'email.required' => 'Please enter your email address.',
-    //     'email.email' => 'Please enter a valid email address.',
-    //     'rating.required' => 'Please select a rating.',
-    //     'message.required' => 'Please enter your feedback message.',
-    //     'message.min' => 'Feedback must be at least 10 characters.',
-    // ];
+    public function submitContact()
+    {
+        $this->validate([
+            'contact_name' => 'required|max:255',
+            'contact_email' => 'required|email',
+            'contact_subject' => 'required|max:255',
+            'contact_message' => 'required|min:5',
+        ]);
+
+        ContactUsModel::create([
+            'contact_name' => $this->contact_name,
+            'contact_email' => $this->contact_email,
+            'contact_subject' => $this->contact_subject,
+            'contact_message' => $this->contact_message,
+        ]);
+
+        $this->reset(['contact_name','contact_email','contact_subject','contact_message']);
+
+        session()->flash('contact_success','Thank you for your contact! It will be reviewed and posted soon.');
+    }
 
     public function submitFeedback()
     {
-        $this->validate();
+        $this->validate([
+            'name' => 'required|max:255',
+            'email' => 'required|email',
+            'rating' => 'required',
+            'message' => 'required|min:5',
+        ]);
 
         CustomerFeedBackModel::create([
             'name' => $this->name,

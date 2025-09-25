@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Livewire\Admin\AddCars;
 use App\Livewire\Admin\ManageBooking;
 use App\Livewire\Admin\Dashboard;
+use App\Livewire\Admin\ManageCustomerFeedback;
+use App\Livewire\Admin\ManageContactUs;
 use App\Livewire\CarSearch;
 use App\Livewire\LandingPage;
 
@@ -23,6 +25,8 @@ Route::middleware([
     Route::get('/dashboard',Dashboard::class)->name('admin.dashboard');
 });
 
+Route::get('/managecontact',ManageContactUs::class)->name('admin.manage-contact-us');
+Route::get('/managefeedback', ManageCustomerFeedback::class)->name('admin.manage-customer-feedback');
 Route::get('/searchcar',CarSearch::class)->name('car-search');
 Route::get('/addcars',AddCars::class)->name('admin.add-cars');
 Route::get('/manageBooking',ManageBooking::class)->name('admin.manage-booking');

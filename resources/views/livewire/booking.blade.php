@@ -26,15 +26,15 @@
                                         <div class="d-flex justify-content-around my-3 text-center">
                                             <div class="d-flex flex-column align-items-center">
                                                 <i class="fas fa-user text-secondary mb-1"></i>
-                                                <small class="text-muted">5 Seats</small>
+                                                <small class="text-muted">{{ $car->setting_capacity }}</small>
                                             </div>
                                             <div class="d-flex flex-column align-items-center">
                                                 <i class="fas fa-gas-pump text-secondary mb-1"></i>
-                                                <small class="text-muted">Hybrid</small>
+                                                <small class="text-muted">{{ $car->fuel }}</small>
                                             </div>
                                             <div class="d-flex flex-column align-items-center">
                                                 <i class="fas fa-cog text-secondary mb-1"></i>
-                                                <small class="text-muted">Automatic</small>
+                                                <small class="text-muted">{{ $car->transmission }}</small>
                                             </div>
                                         </div>
                                     </div>
@@ -88,6 +88,32 @@
                                         </div>
                                         <hr>
 
+                                        <!-- Driver's License Upload Section -->
+                                        <h6 class="mt-3"><i class="fas fa-id-card mr-2"></i> Driver's License</h6>
+                                        <div class="form-group">
+                                            <label for="driversLicense" class="font-weight-bold">Upload Driver's License
+                                                <span class="text-danger">*</span></label>
+                                            <input type="file" class="form-control-file" id="driversLicense"
+                                                wire:model="requirements_valid_id_photo" accept="image/*,.pdf">
+                                            <small class="form-text text-muted">Upload a clear photo or scan of your
+                                                valid driver's license (JPG Or PNG)</small>
+                                            @error('requirements_valid_id_photo')
+                                                <span class="text-danger small d-block">{{ $message }}</span>
+                                            @enderror
+                                            {{-- @if ($driversLicense)
+                                                @if (in_array($driversLicense->extension(), ['jpg', 'jpeg', 'png', 'gif']))
+                                                    <img src="{{ $driversLicense->temporaryUrl() }}"
+                                                        class="img-fluid mt-2 rounded border" style="max-height: 150px;">
+                                                @else
+                                                    <div class="mt-2 p-2 bg-light rounded border">
+                                                        <i class="fas fa-file-pdf text-danger mr-2"></i>
+                                                        <span>{{ $driversLicense->getClientOriginalName() }}</span>
+                                                    </div>
+                                                @endif
+                                            @endif --}}
+                                        </div>
+                                        <hr>
+
                                         <!-- Terms and Conditions Section -->
                                         <h5 class="mt-3"><i class="fas fa-file-contract mr-2"></i> Terms & Conditions
                                         </h5>
@@ -107,7 +133,8 @@
                                                     (₱10,000 deductible).</p>
                                                 <p class="mb-1">6. Late returns will be charged at 1.5x the hourly
                                                     rate after 1-hour grace period.</p>
-                                                <p class="mb-1">7. The vehicle must not be used for illegal activities
+                                                <p class="mb-1">7. The vehicle must not be used for illegal
+                                                    activities
                                                     or towing without permission.</p>
                                                 <p class="mb-1">8. In case of accident or breakdown, contact us
                                                     immediately at our 24/7 hotline.</p>

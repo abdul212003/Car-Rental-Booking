@@ -20,6 +20,7 @@ class Booking extends Component
     public $endDate;
     public $totalDays = 0;
     public $totalCost = 0;
+    public $requirements_valid_id_photo;
     public $gcashReferenceNumber;
     public $gcashReceipt;
     public $guestName;
@@ -33,6 +34,7 @@ class Booking extends Component
         'startDate' => 'required|date|after_or_equal:today',
         'endDate'   => 'required|date|after_or_equal:startDate',
         'gcashReferenceNumber' => 'required|string|size:13',
+        'requirements_valid_id_photo' => 'required|image|max:2048',
         'gcashReceipt' => 'required|image|max:2048', // 2MB Max
         'guestName' => 'required|string|max:255',
         'guestEmail' => 'required|email',
@@ -47,7 +49,7 @@ class Booking extends Component
     public function openModal($carId)
     {
         $this->resetValidation();
-        $this->reset(['startDate', 'endDate', 'totalDays', 'totalCost', 'gcashReferenceNumber', 'gcashReceipt','guestName','guestEmail','guestPhone','agreeTerms']);
+        $this->reset(['startDate', 'endDate', 'totalDays', 'totalCost', 'gcashReferenceNumber', 'gcashReceipt','guestName','guestEmail','guestPhone','agreeTerms','requirements_valid_id_photo']);
         $this->carId = $carId;
         $this->car = CarsModel::findOrFail($carId);
         $this->showModal = true;
@@ -106,6 +108,7 @@ class Booking extends Component
 
         // Store the receipt image
         $receiptPath = $this->gcashReceipt->store('gcash-receipts', 'public');
+        $validIdPath = $this->requirements_valid_id_photo->store('requirements_valid_id_photo', 'public');
 
         //Create the booking
         BookingModel::create([
@@ -118,6 +121,7 @@ class Booking extends Component
             'end_date' => $this->endDate,
             'total_days' => $this->totalDays,
             'total_cost' => $this->totalCost,
+            'requirements_valid_id_photo' => $validIdPath,
             'gcash_reference_number' => $this->gcashReferenceNumber,
             'gcash_receipt' => $receiptPath,
             'status' => 'pending',

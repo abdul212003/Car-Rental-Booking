@@ -13,9 +13,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#home">Home</a>
                     </li>
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                         <a class="nav-link" href="/searchcar">Cars</a>
-                    </li>
+                    </li> --}}
                     <li class="nav-item">
                         <a class="nav-link" href="#about">About Us</a>
                     </li>
@@ -137,7 +137,7 @@
                     </div>
                 @empty
                     <div class="col-12 text-center">
-                        <p class="text-muted">No testimonials available yet. Be the first to share your experience!</p>
+                        <p class="text-muted">No feedback available yet. Be the first to share your experience!</p>
                     </div>
                 @endforelse
             </div>
@@ -256,35 +256,46 @@
                 </div>
                 <div class="col-lg-8">
                     <div class="contact-form">
-                        {{-- @if (session()->has('contact_success'))
+                        @if (session()->has('contact_success'))
                             <div class="alert alert-success alert-dismissible fade show" role="alert">
                                 {{ session('contact_success') }}
                                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                             </div>
-                        @endif --}}
+                        @endif
 
-                        <form>
+                        <form wire:submit.prevent="submitContact">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="contact-name" class="form-label">Your Name</label>
-                                    <input type="text" class="form-control" id="contact-name" required>
-                                    {{-- @error('contactName') <span class="text-danger small">{{ $message }}</span> @enderror --}}
+                                    <input type="text" class="form-control" id="contact-name"
+                                        wire:model="contact_name" required>
+                                    @error('contact_name')
+                                        <span class="text-danger small">{{ $message }}</span>
+                                    @enderror
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="contact-email" class="form-label">Email Address</label>
-                                    <input type="email" class="form-control" id="contact-email" required>
-                                    {{-- @error('contactEmail') <span class="text-danger small">{{ $message }}</span> @enderror --}}
+                                    <input type="email" class="form-control" id="contact-email"
+                                        wire:model="contact_email" required>
+                                    @error('contact_email')
+                                        <span class="text-danger small">{{ $message }}</span>
+                                    @enderror
                                 </div>
                             </div>
                             <div class="mb-3">
                                 <label for="subject" class="form-label">Subject</label>
-                                <input type="text" class="form-control" id="subject" required>
-                                {{-- @error('subject') <span class="text-danger small">{{ $message }}</span> @enderror --}}
+                                <input type="text" class="form-control" id="subject"
+                                    wire:model="contact_subject" required>
+                                @error('contact_subject')
+                                    <span class="text-danger small">{{ $message }}</span>
+                                @enderror
                             </div>
                             <div class="mb-3">
                                 <label for="contact-message" class="form-label">Message</label>
-                                <textarea class="form-control" id="contact-message" rows="5" required></textarea>
-                                {{-- @error('contactMessage') <span class="text-danger small">{{ $message }}</span> @enderror --}}
+                                <textarea class="form-control" id="contact-message" rows="5" wire:model="contact_message" required></textarea>
+                                @error('contact_message')
+                                    <span class="text-danger small">{{ $message }}</span>
+                                @enderror
                             </div>
                             <button type="submit" class="btn btn-primary"
                                 style="background-color:#6f42c1; border-color:#6f42c1;">

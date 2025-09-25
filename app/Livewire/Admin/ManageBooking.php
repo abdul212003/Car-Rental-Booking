@@ -26,6 +26,6 @@ class ManageBooking extends Component
     public function render()
     {
         $bookings = BookingModel::latest()->paginate(10);
-        return view('livewire.admin.manage-booking',compact('bookings'))->layout('layouts.app');
+        return view('livewire.admin.manage-booking',compact('bookings'))->layout('layouts.admin');
     }
 }

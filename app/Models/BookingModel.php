@@ -22,6 +22,7 @@ class BookingModel extends Model
         'end_date',
         'total_days',
         'total_cost',
+        'requirements_valid_id_photo',
         'gcash_reference_number',
         'gcash_receipt',
         'status',

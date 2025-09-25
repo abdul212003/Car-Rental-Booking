@@ -126,6 +126,6 @@ class AddCars extends Component
     public function render()
     {
         $cars = CarsModel::latest()->paginate(10);
-        return view('livewire.admin.add-cars',compact('cars'))->layout('layouts.app');
+        return view('livewire.admin.add-cars',compact('cars'))->layout('layouts.admin');
     }
 }

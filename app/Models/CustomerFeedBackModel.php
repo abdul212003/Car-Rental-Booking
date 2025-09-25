@@ -8,6 +8,8 @@ class CustomerFeedBackModel extends Model
 {
     protected $table = 'customer_feedback';
 
+    protected $primaryKey = 'id';
+    
     protected $fillable = [
         'name',
         'email',

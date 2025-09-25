@@ -60,12 +60,12 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="/manageBooking" class="nav-link">
+                            <a href="/managefeedback" class="nav-link">
                                 <i class="fa-solid fa-comment"></i> Customer Feedback
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="/manageBooking" class="nav-link">
+                            <a href="/managecontact" class="nav-link">
                                 <i class="fas fa-address-book"></i> Customer Contact Management
                             </a>
                         </li>
