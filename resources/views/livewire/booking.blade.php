@@ -2,7 +2,7 @@
     <div>
         @if ($showModal)
             <div wire:ignore.self class="modal fade show d-block" tabindex="-1" role="dialog"
-                aria-labelledby="bookingModalLabel" aria-hidden="true" style="background-color: rgba(0,0,0,0.5);">
+                aria-labelledby="bookingModalLabel" aria-hidden="false" style="background-color: rgba(0,0,0,0.5);">
                 <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
                         <div class="modal-header bg-dark text-white">
@@ -229,7 +229,7 @@
                                                 <input type="file" class="form-control" id="driversLicense"
                                                     wire:model="requirements_valid_id_photo" accept="image/*,.pdf">
                                                 <small class="form-text text-muted">Upload a clear photo or scan of
-                                                    your valid driver's license (JPG, PNG, or PDF)</small>
+                                                    your valid driver's license (JPG or PNG)</small>
                                                 @error('requirements_valid_id_photo')
                                                     <span class="text-danger small d-block">{{ $message }}</span>
                                                 @enderror

@@ -347,8 +347,7 @@
                                     <div class="col-md-6">
                                         <label for="setting_capacity" class="form-label">Seating Capacity <span
                                                 class="text-danger">*</span></label>
-                                        <select class="form-select" id="setting_capacity"
-                                            wire:model="setting_capacity">
+                                        <select class="form-select" id="setting_capacity" wire:model="setting_capacity">
                                             <option value="">-- Select Capacity --</option>
                                             <option value="2">2 Seats</option>
                                             <option value="4">4 Seats</option>

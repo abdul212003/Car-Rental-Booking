@@ -34,38 +34,32 @@ class CarsModel extends Model
 
     public function isAvailable($startDate, $endDate)
     {
-        if (!$startDate || !$endDate) 
-        {
+        if (!$startDate || !$endDate) {
             return $this->status === 'available';
         }
 
         $hasConflict = $this->bookings()
-            ->where('status', 'confirmed')
+            ->whereIn('status', ['confirmed', 'pending']) // block both confirmed & pending
             ->where(function ($query) use ($startDate, $endDate) {
-                $query->whereBetween('start_date', [$startDate, $endDate])
-                        ->orWhereBetween('end_date',[$startDate,$endDate])
-                        ->orWhere(function ($query) use ($startDate, $endDate) {
-                            $query->where('start_date', '<=' , $startDate)
-                                ->where('end_date', '>=' , $endDate);
-                        });
-            } )->exists();
+                $query->where('start_date', '<=', $endDate)
+                    ->where('end_date', '>=', $startDate);
+            })
+            ->exists();
 
         return !$hasConflict && $this->status === 'available';
     }
+
 
     public function scopeAvailableBetween($query, $startDate, $endDate)
     {
         return $query->where('status', 'available')
             ->whereDoesntHave('bookings', function ($q) use ($startDate, $endDate) {
-                $q->where('status', 'confirmed')
+                $q->whereIn('status', ['confirmed', 'pending']) // keep consistent
                 ->where(function ($query) use ($startDate, $endDate) {
-                    $query->whereBetween('start_date', [$startDate, $endDate])
-                            ->orWhereBetween('end_date', [$startDate, $endDate])
-                            ->orWhere(function ($query) use ($startDate, $endDate) {
-                                $query->where('start_date', '<=', $startDate)
-                                    ->where('end_date', '>=', $endDate);
-                            });
+                    $query->where('start_date', '<=', $endDate)
+                            ->where('end_date', '>=', $startDate);
                 });
             });
     }
+
 }

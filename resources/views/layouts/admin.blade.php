@@ -16,7 +16,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
         <div class="container-fluid">
             <a class="navbar-brand fw-bold" href="/dashboard">
-                <i class="bi bi-speedometer2 me-2"></i>Admin Dashboard
+                <i class="bi bi-car-front-fill me-2"></i>RJ Car Rental
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>

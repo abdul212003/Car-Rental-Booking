@@ -126,7 +126,7 @@ class AddCars extends Component
         session()->flash('success', 'Car deleted successfully!');
     }
 
-     public function toggleStatus($id)
+    public function toggleStatus($id)
     {
         $car = CarsModel::findOrFail($id);
         $car->update(['status' => $car->status == 'available' ? 'unavailable' : 'available']);
