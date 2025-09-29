@@ -25,7 +25,9 @@ return new class extends Migration
             $table->string('gcash_reference_number')->nullable();
             $table->string('requirements_valid_id_photo');
             $table->string('gcash_receipt')->nullable(); // Path to uploaded image
-            $table->enum('status', ['pending', 'confirmed', 'cancelled'])->default('pending');
+            $table->enum('status', ['pending', 'confirmed', 'rented_out', 'returned' ,'cancelled'])->default('pending');
+            $table->timestamp('rented_out_at')->nullable();
+            $table->timestamp('returned_at')->nullable();
             $table->timestamps();
         });
     }

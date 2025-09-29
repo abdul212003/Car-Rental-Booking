@@ -41,7 +41,14 @@
                                 </td>
                             </tbody>
                         @empty
-                            <h3>No Contacts Found.</h3>
+                            <tr>
+                                <td colspan="13" class="text-center py-4">
+                                    {{-- <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i> --}}
+                                    <i class="fa-solid fa-address-book fa-3x text-muted mb-3"></i>
+                                    <h4 class="text-muted">No Contact Found</h4>
+                                    <p class="text-muted">There are no contact to manage at the moment.</p>
+                                </td>
+                            </tr>
                         @endforelse
                     </table>
                 </div>

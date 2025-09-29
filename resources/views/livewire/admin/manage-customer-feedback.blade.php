@@ -41,7 +41,13 @@
                                 </td>
                             </tbody>
                         @empty
-                            <h3>No Feedback Found.</h3>
+                            <tr>
+                                <td colspan="13" class="text-center py-4">
+                                    <i class="fa-solid fa-comments fa-3x text-muted mb-3"></i>
+                                    <h4 class="text-muted">No Feedbacks Found</h4>
+                                    <p class="text-muted">There are no feedback to manage at the moment.</p>
+                                </td>
+                            </tr>
                         @endforelse
                     </table>
                 </div>

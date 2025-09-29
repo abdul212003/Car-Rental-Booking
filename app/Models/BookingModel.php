@@ -26,9 +26,13 @@ class BookingModel extends Model
         'gcash_reference_number',
         'gcash_receipt',
         'status',
+        'rented_out_at',
+        'returned_at',
     ];
 
     protected $casts = [
+        'rented_out_at' => 'datetime',
+        'returned_at' => 'datetime',
         'start_date' => 'date',
         'end_date' => 'date',
     ];
@@ -37,6 +41,7 @@ class BookingModel extends Model
     // {
     //     return $this->belongsTo(User::class);
     // }
+    
 
     public function car()
     {

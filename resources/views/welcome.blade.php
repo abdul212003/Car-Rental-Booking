@@ -9,14 +9,14 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     @livewireStyles
     <style>
-        .hero-section {
-            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('images/rj-pic.jpeg');
+        /* .hero-section {
+
             background-size: cover;
             background-position: center;
             color: white;
             padding: 100px 0;
             text-align: center;
-        }
+        } */
 
         .feature-icon {
             font-size: 2.5rem;
@@ -119,7 +119,8 @@
     </nav>
 
     <!-- Hero Section -->
-    <section id="home" class="hero-section">
+    <section id="home"
+        style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('{{ asset('images/rj-pic.jpeg') }}'); background-size: cover; background-position: center;">
         <div class="container">
             <h1 class="display-4 fw-bold">Drive Your Dream Car Today</h1>
             <p class="lead">Affordable vehicles at resonable prices. No account needed to book.</p>
@@ -187,7 +188,7 @@
                     </div>
                 </div>
                 <div class="col-lg-6">
-                    <img src="images/rj-pic.jpeg" alt="About RJ Car Rentals"
+                    <img src="{{ asset('images/rj-pic.jpeg') }}" alt="About RJ Car Rentals"
                         class="img-fluid about-img mx-auto d-block h-50 w-auto">
                 </div>
             </div>
