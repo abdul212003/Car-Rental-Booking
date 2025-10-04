@@ -17,6 +17,8 @@ class BookingModel extends Model
         'guest_name',
         'guest_email',
         'guest_phone_number',
+        'operator',
+        'destination',
         'car_id',
         'start_date',
         'end_date',

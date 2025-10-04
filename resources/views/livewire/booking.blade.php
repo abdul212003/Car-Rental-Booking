@@ -184,6 +184,40 @@
                                                     @enderror
                                                 </div>
 
+                                                <div class="form-group mb-3">
+                                                    <label for="Destination" class="font-weight-bold">Destination
+                                                        <span class="text-danger">*</span></label>
+                                                    <input type="text" class="form-control"
+                                                        wire:model="destination">
+                                                    @error('destination')
+                                                        <span class="text-danger small">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+
+                                                <div class="form-group mb-3">
+                                                    <label for="operator" class="font-weight-bold">Operator Type
+                                                        <span class="text-danger">*</span></label>
+                                                    <select class="form-control" id="operator" wire:model="operator"
+                                                        wire:change="calculateCost">
+                                                        <option value="">-- Select Operator Type --</option>
+                                                        <option value="self_drive">Self Drive (No additional cost)
+                                                        </option>
+                                                        <option value="with_driver">With Driver (+₱500 per day)
+                                                        </option>
+                                                    </select>
+                                                    @error('operator')
+                                                        <span class="text-danger small">{{ $message }}</span>
+                                                    @enderror
+
+                                                    <!-- Display operator fee information -->
+                                                    @if ($operatorFee > 0)
+                                                        <small class="text-info">
+                                                            <i class="fas fa-info-circle"></i> Driver fee:
+                                                            ₱{{ number_format($operatorFee, 2) }} per day
+                                                        </small>
+                                                    @endif
+                                                </div>
+
                                                 <div class="row mb-3">
                                                     <div class="col-md-6">
                                                         <div class="form-group">
@@ -212,8 +246,23 @@
                                                 <div class="alert alert-info mb-3">
                                                     <p class="mb-1"><strong>Total Days:</strong> {{ $totalDays }}
                                                     </p>
-                                                    <p class="mb-0"><strong>Total Cost:</strong>
-                                                        ₱{{ number_format($totalCost, 2) }}</p>
+
+                                                    <!-- Display cost breakdown -->
+                                                    @if ($operatorFee > 0)
+                                                        <p class="mb-1">
+                                                            <strong>Car Rental:</strong>
+                                                            ₱{{ number_format($totalDays * $car->price_per_day, 2) }}
+                                                        </p>
+                                                        <p class="mb-1">
+                                                            <strong>Driver Fee:</strong>
+                                                            ₱{{ number_format($operatorFee * $totalDays, 2) }}
+                                                        </p>
+                                                    @endif
+
+                                                    <p class="mb-0 fw-bold fs-6">
+                                                        <strong>Total Cost:</strong>
+                                                        ₱{{ number_format($totalCost, 2) }}
+                                                    </p>
                                                 </div>
                                             </div>
 
@@ -266,17 +315,20 @@
                                             <!-- GCash Payment Section -->
                                             <h6 class="mt-3"><i class="fas fa-mobile-alt me-2"></i> GCash Payment
                                             </h6>
-                                            <p class="small text-muted mb-2">Send payment to:
-                                                <strong>09XX-XXX-XXXX</strong>
+                                            <p class="small text-muted mb-2">Send payment to: <span
+                                                    class="fw-bolder fs-6">Gil
+                                                    Alvior Jr.</span>
+                                                <strong>(09XX-XXX-XXXX)</strong>
                                             </p>
 
                                             <div class="form-group mb-3">
                                                 <label for="gcashReferenceNumber" class="font-weight-bold">GCash
                                                     Reference Number (13 digits) <span
                                                         class="text-danger">*</span></label>
-                                                <input type="text" class="form-control" id="gcashReferenceNumber"
+                                                <input type="number" class="form-control" id="gcashReferenceNumber"
                                                     wire:model="gcashReferenceNumber"
-                                                    placeholder="e.g., 1234567890123">
+                                                    placeholder="e.g., 1234567890123"
+                                                    oninput="if(this.value.length > 13) this.value = this.value.slice(0, 13);">
                                                 @error('gcashReferenceNumber')
                                                     <span class="text-danger small">{{ $message }}</span>
                                                 @enderror

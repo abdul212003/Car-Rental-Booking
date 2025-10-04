@@ -13,7 +13,7 @@ class AddCars extends Component
 {
     use WithPagination, WithFileUploads;
 
-    public $carId, $brand,$transmission,$setting_capacity,$fuel, $year, $price_per_day, $status = 'available', $image,$interior_image,$additional_image, $existingImage,$existingInteriorImage,$existingAdditionalImage;
+    public $carId,$color,$plate_number, $brand,$transmission,$setting_capacity,$fuel, $year, $price_per_day, $status = 'available', $image,$interior_image,$additional_image, $existingImage,$existingInteriorImage,$existingAdditionalImage;
     public $showModal = false, $modalTitle = 'Add New Car', $editMode = false;
 
     protected $paginationTheme = 'bootstrap';
@@ -21,6 +21,8 @@ class AddCars extends Component
     public function rules()
     {
         return [
+            'color' => 'required|string|max:255',
+            'plate_number' => 'required|string|max:255',
             'brand'  => 'required|string|max:255',
             'transmission'  => 'required|string|max:255',
             'setting_capacity'  => 'required|string|max:255',
@@ -46,12 +48,13 @@ class AddCars extends Component
     {
         $car = CarsModel::findOrFail($id);
         $this->carId = $car->id;
+        $this->color = $car->color;
+        $this->plate_number = $car->plate_number;
         $this->brand = $car->brand;
-        $this->model = $car->model;
+        // $this->model = $car->model;
         $this->transmission = $car->transmission;
         $this->setting_capacity = $car->setting_capacity;
         $this->fuel = $car->fuel;
-        $this->color = $car->color;
         $this->year = $car->year;
         $this->price_per_day = $car->price_per_day;
         $this->status = $car->status;
@@ -81,6 +84,7 @@ class AddCars extends Component
         }
 
         $this->showModal = false;
+        $this->resetForm();
         session()->flash('success', $message);
     }
 
@@ -108,6 +112,8 @@ class AddCars extends Component
     private function getCarData()
     {
         $data = [
+            'color' => $this->color,
+            'plate_number' => $this->plate_number,
             'brand' => $this->brand,
             'transmission' => $this->transmission,
             'setting_capacity' => $this->setting_capacity,
@@ -147,7 +153,7 @@ class AddCars extends Component
     private function resetForm()
     {
         $this->reset([
-            'carId', 'brand','transmission', 'setting_capacity', 
+            'carId','color','plate_number' ,'brand','transmission', 'setting_capacity', 
             'fuel','year', 'price_per_day', 'status',
             'image', 'interior_image', 'additional_image',
             'existingImage', 'existingInteriorImage', 'existingAdditionalImage'

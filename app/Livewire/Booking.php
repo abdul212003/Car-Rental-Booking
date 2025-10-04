@@ -27,13 +27,18 @@ class Booking extends Component
     public $guestEmail;
     public $guestPhone;
     public $agreeTerms = false;
+    public $destination;
+    public $operator = 'self drive';
+    public $operatorFee = 0;
 
     protected $listeners = ['openBookingModal' => 'openModal'];
 
     protected $rules = [
+        'destination' => 'required|string|max:255',
+        'operator' => 'required|in:self_drive,with_driver',
         'startDate' => 'required|date|after_or_equal:today',
         'endDate'   => 'required|date|after_or_equal:startDate',
-        'gcashReferenceNumber' => 'required|string|size:13',
+        'gcashReferenceNumber' => 'required|string|digits:13',
         'requirements_valid_id_photo' => 'required|image|max:2048',
         'gcashReceipt' => 'required|image|max:2048', // 2MB Max
         'guestName' => 'required|string|max:255',
@@ -49,9 +54,11 @@ class Booking extends Component
     public function openModal($carId)
     {
         $this->resetValidation();
-        $this->reset(['startDate', 'endDate', 'totalDays', 'totalCost', 'gcashReferenceNumber', 'gcashReceipt','guestName','guestEmail','guestPhone','agreeTerms','requirements_valid_id_photo']);
+        $this->reset(['destination','operator','startDate', 'endDate', 'totalDays', 'totalCost', 'gcashReferenceNumber', 'gcashReceipt','guestName','guestEmail','guestPhone','agreeTerms','requirements_valid_id_photo']);
         $this->carId = $carId;
         $this->car = CarsModel::findOrFail($carId);
+        $this->operator = 'self_drive';
+        $this->calculateOperatorFee();
 
         // Pre-fill email if it exists in session
         if (session()->has('current_booking_email')) {
@@ -62,37 +69,56 @@ class Booking extends Component
 
     }
 
+    public function calculateOperatorFee()
+    {
+        // Set operator fee based on selection
+        if ($this->operator === 'with_driver') {
+            $this->operatorFee = 500;
+        } else {
+            $this->operatorFee = 0;
+        }
+    }
+
     public function calculateCost()
     {
         if ($this->startDate && $this->endDate) {
-            try{
+            try {
                 $start = Carbon::createFromFormat('Y-m-d', $this->startDate);
                 $end = Carbon::createFromFormat('Y-m-d', $this->endDate);
 
-            if ($end->greaterThanOrEqualTo($start)) 
-                {
+                if ($end->greaterThanOrEqualTo($start)) {
                     $this->totalDays = $start->diffInDays($end) + 1;
-                    $this->totalCost = $this->totalDays * $this->car->price_per_day;
+                    
+                    // Calculate base cost (car rental only)
+                    $baseCost = $this->totalDays * $this->car->price_per_day;
+                    
+                    // Calculate operator fee
+                    $this->calculateOperatorFee();
+                    $operatorTotalFee = $this->operatorFee * $this->totalDays;
+                    
+                    // Total cost = base cost + operator fee
+                    $this->totalCost = $baseCost + $operatorTotalFee;
                 } else {
                     $this->totalDays = 0;
                     $this->totalCost = 0;
+                    $this->operatorFee = 0;
                 }
             } catch (\Exception $e) {
                 $this->totalDays = 0;
                 $this->totalCost = 0;
+                $this->operatorFee = 0;
             }
-            
-        }
-        else 
-        {
+        } else {
             $this->totalDays = 0;
             $this->totalCost = 0;
+            $this->operatorFee = 0;
         }
     }
 
+
     public function updated($propertyName)
     {
-        if (in_array($propertyName, ['startDate', 'endDate'])) {
+        if (in_array($propertyName, ['startDate', 'endDate','operator'])) {
             $this->calculateCost();
         }
 
@@ -134,8 +160,7 @@ class Booking extends Component
         $validIdPath = $this->requirements_valid_id_photo->store('requirements_valid_id_photo', 'public');
 
         //Create the booking
-        BookingModel::create([
-            // 'user_id' => null,
+         BookingModel::create([
             'guest_name' => $this->guestName,
             'guest_email' => $this->guestEmail,
             'guest_phone_number' => $this->guestPhone,
@@ -144,6 +169,10 @@ class Booking extends Component
             'end_date' => $this->endDate,
             'total_days' => $this->totalDays,
             'total_cost' => $this->totalCost,
+            'operator' => $this->operator,
+            'operator_fee' => $this->operatorFee,
+            'operator_total_fee' => $this->operatorFee * $this->totalDays,
+            'destination' => $this->destination,
             'requirements_valid_id_photo' => $validIdPath,
             'gcash_reference_number' => $this->gcashReferenceNumber,
             'gcash_receipt' => $receiptPath,

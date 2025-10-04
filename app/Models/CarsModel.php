@@ -16,6 +16,8 @@ class CarsModel extends Model
 
     protected $fillable = [
         'brand',
+        'color',
+        'plate_number',
         'transmission',
         'setting_capacity',
         'fuel',

@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('guest_name');
             $table->string('guest_email');
             $table->string('guest_phone_number');
+            $table->string('operator');
+            $table->string('destination');
             $table->date('start_date');
             $table->date('end_date');
             $table->integer('total_days');
