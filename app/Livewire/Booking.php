@@ -38,7 +38,7 @@ class Booking extends Component
         'gcashReceipt' => 'required|image|max:2048', // 2MB Max
         'guestName' => 'required|string|max:255',
         'guestEmail' => 'required|email',
-        'guestPhone' => 'required|string|max:20',
+        'guestPhone' => 'required|regex:/^09\d{9}$/',
         'agreeTerms' => 'accepted',
     ];
 

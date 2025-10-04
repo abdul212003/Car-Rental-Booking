@@ -14,6 +14,11 @@ return [
     |
     */
 
+    'skyio' => [
+        'api_key' => env('SKYIO_API_KEY'),
+        'base_url' => env('SKYIO_BASE_URL', 'https://sms.skyio.site'),
+    ],
+
     'postmark' => [
         'token' => env('POSTMARK_TOKEN'),
     ],

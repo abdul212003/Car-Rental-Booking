@@ -6,6 +6,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 use App\Models\CarsModel;
 
 class AddCars extends Component
@@ -32,35 +33,6 @@ class AddCars extends Component
             'additional_image' => 'nullable|image|max:2048',
         ];
     }
-
-    // public function createCars()
-    // {
-    //     $this->validate();
-
-    //     $pathImage = $this->image->store('car-images', 'public');
-    //     $pathInteriorImage = $this->interior_image->store('car-images/interior', 'public');
-    //     $pathAdditionalImage = $this->additional_image->store('car-images/additional', 'public');
-
-    //     CarsModel::updateOrCreate(
-    //         ['id' => $this->carId], 
-    //         [
-    //             'brand' => $this->brand,
-    //             'model' => $this->model,
-    //             'transmission' => $this->transmission,
-    //             'setting_capacity' => $this->setting_capacity,
-    //             'fuel' => $this->fuel,
-    //             'color' => $this->color,
-    //             'year' => $this->year,
-    //             'price_per_day' => $this->price_per_day,
-    //             'status' => $this->status,
-    //             'image' => $pathImage,
-    //             'interior_image' => $pathInteriorImage,
-    //             'additional_image' => $pathAdditionalImage,
-    //         ]
-    //     );
-
-    //     $this->reset(['brand','transmission','setting_capacity','fuel','year','price_per_day','status','image','interior_image','additional_image']);
-    // }
 
     public function create()
     {
@@ -172,7 +144,7 @@ class AddCars extends Component
         return $data;
     }
 
-     private function resetForm()
+    private function resetForm()
     {
         $this->reset([
             'carId', 'brand','transmission', 'setting_capacity', 
@@ -228,7 +200,15 @@ class AddCars extends Component
 
     public function render()
     {
-        $cars = CarsModel::latest()->paginate(10);
-        return view('livewire.admin.add-cars',compact('cars'))->layout('layouts.admin');
+        if(Auth::user()->role == 'admin')
+        {
+             $cars = CarsModel::latest()->paginate(10);
+            return view('livewire.admin.add-cars',compact('cars'))->layout('layouts.admin');
+        }
+        else
+        {
+            abort(403);
+        }
+       
     }
 }

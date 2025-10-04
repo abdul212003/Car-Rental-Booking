@@ -5,6 +5,7 @@ namespace App\Livewire\Admin;
 use Livewire\Component;
 use App\Models\ContactUsModel;
 use Livewire\WithPagination;
+use Illuminate\Support\Facades\Auth;
 
 class ManageContactUs extends Component
 {
@@ -49,7 +50,15 @@ class ManageContactUs extends Component
 
     public function render()
     {
-        $contact = ContactUsModel::latest()->paginate(10);
-        return view('livewire.admin.manage-contact-us',compact('contact'))->layout('layouts.admin');
+        if(Auth::user()->role == 'admin')
+        {   
+             $contact = ContactUsModel::latest()->paginate(10);
+             return view('livewire.admin.manage-contact-us',compact('contact'))->layout('layouts.admin');
+        }
+        else
+        {
+            abort(403);
+        }
+       
     }
 }

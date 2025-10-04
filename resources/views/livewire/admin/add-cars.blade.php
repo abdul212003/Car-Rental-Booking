@@ -26,6 +26,7 @@
                     <table class="table table-bordered">
                         <thead>
                             <tr>
+                                <th>Id</th>
                                 <th>Image</th>
                                 <th>Brand & Model</th>
                                 <th>Transmission</th>
@@ -41,6 +42,7 @@
                         <tbody>
                             @forelse($cars as $car)
                                 <tr>
+                                    <td>{{ $car->id }}</td>
                                     <td>
                                         @if ($car->image)
                                             <img src="{{ asset('storage/' . $car->image) }}"

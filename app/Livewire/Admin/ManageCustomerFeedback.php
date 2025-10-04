@@ -5,6 +5,7 @@ namespace App\Livewire\Admin;
 use Livewire\Component;
 use App\Models\CustomerFeedBackModel;
 use Livewire\WithPagination;
+use Illuminate\Support\Facades\Auth;
 
 
 class ManageCustomerFeedback extends Component
@@ -50,8 +51,16 @@ class ManageCustomerFeedback extends Component
 
     public function render()
     {
-        $feedback = CustomerFeedBackModel::latest()->paginate(10);
+        if(Auth::user()->role == 'admin')
+        {
+             $feedback = CustomerFeedBackModel::latest()->paginate(10);
 
-        return view('livewire.admin.manage-customer-feedback',compact('feedback'))->layout('layouts.admin');
+             return view('livewire.admin.manage-customer-feedback',compact('feedback'))->layout('layouts.admin');
+        }
+        else
+        {
+            abort(403);
+        }
+       
     }
 }
