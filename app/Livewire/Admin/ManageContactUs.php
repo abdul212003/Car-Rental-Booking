@@ -14,6 +14,8 @@ class ManageContactUs extends Component
     public $id;
     public $contact_name,$contact_email,$contact_subject,$contact_message;
 
+    public $search = '';
+
     public function editContact($id)
     {
         $editContact = ContactUsModel::findOrFail($id);
@@ -52,7 +54,20 @@ class ManageContactUs extends Component
     {
         if(Auth::user()->role == 'admin')
         {   
-             $contact = ContactUsModel::latest()->paginate(10);
+        // Build the query with search and filters
+            $contactQuery = ContactUsModel::query();
+            
+            // Apply search filter
+            if (!empty($this->search)) {
+                $contactQuery->where(function($query) {
+                    $query->where('contact_name', 'like', '%' . $this->search . '%')
+                        ->orWhere('contact_email', 'like', '%' . $this->search . '%')
+                        ->orWhere('contact_subject', 'like', '%' . $this->search . '%')
+                        ->orWhere('contact_message', 'like', '%' . $this->search . '%');
+                });
+            }
+            $contact = $contactQuery->latest()->paginate(10);
+              
              return view('livewire.admin.manage-contact-us',compact('contact'))->layout('layouts.admin');
         }
         else

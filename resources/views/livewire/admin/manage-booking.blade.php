@@ -52,6 +52,64 @@
             </div>
         </div>
 
+        <!-- Search and Filter Section -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row g-3">
+                    <!-- Search Input -->
+                    <div class="col-md-3">
+                        <label class="form-label">Search</label>
+                        <input type="text" class="form-control"
+                            placeholder="Search by name, email, phone, car brand..." wire:model.live="search">
+                    </div>
+
+                    <!-- Status Filter -->
+                    <div class="col-md-2">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" wire:model.live="filterStatus">
+                            <option value="">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="rented_out">Rented Out</option>
+                            <option value="returned">Returned</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
+
+                    <!-- Car Brand Filter -->
+                    <div class="col-md-2">
+                        <label class="form-label">Car Brand</label>
+                        <select class="form-select" wire:model.live="filterCarBrand">
+                            <option value="">All Brands</option>
+                            @foreach ($carBrands as $brand)
+                                <option value="{{ $brand }}">{{ $brand }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Start Date Filter -->
+                    <div class="col-md-2">
+                        <label class="form-label">Start Date From</label>
+                        <input type="date" class="form-control" wire:model.live="filterStartDate">
+                    </div>
+
+                    <!-- End Date Filter -->
+                    <div class="col-md-2">
+                        <label class="form-label">End Date To</label>
+                        <input type="date" class="form-control" wire:model.live="filterEndDate">
+                    </div>
+
+                    <!-- Reset Button -->
+                    <div class="col-md-1">
+                        <label class="form-label">&nbsp;</label>
+                        <button class="btn btn-outline-secondary w-100" wire:click="resetFilters" title="Reset Filters">
+                            <i class="fas fa-refresh"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive">
@@ -143,7 +201,7 @@
                                             <!-- Mark as Rented Out Button -->
                                             @if ($booking->status == 'confirmed')
                                                 <button class="btn btn-info text-white"
-                                                    wire:click="updateStatus({{ $booking->id }}, 'rented out')"
+                                                    wire:click="updateStatus({{ $booking->id }}, 'rented_out')"
                                                     wire:confirm="Are you sure you want to mark this as rented out?"
                                                     title="Mark as Rented Out">
                                                     <i class="fas fa-key"></i> Rented Out

@@ -16,6 +16,13 @@ class AddCars extends Component
     public $carId,$color,$plate_number, $brand,$transmission,$setting_capacity,$fuel, $year, $price_per_day, $status = 'available', $image,$interior_image,$additional_image, $existingImage,$existingInteriorImage,$existingAdditionalImage;
     public $showModal = false, $modalTitle = 'Add New Car', $editMode = false;
 
+    // Search and Filter properties
+    public $search = '';
+    public $filterBrand = '';
+    public $filterStatus = '';
+    public $filterTransmission = '';
+    public $filterFuel = '';
+
     protected $paginationTheme = 'bootstrap';
 
     public function rules()
@@ -204,12 +211,60 @@ class AddCars extends Component
         $this->{$type . '_image'} = null;
     }
 
+      // Reset filters
+    public function resetFilters()
+    {
+        $this->search = '';
+        $this->filterBrand = '';
+        $this->filterStatus = '';
+        $this->filterTransmission = '';
+        $this->filterFuel = '';
+        $this->resetPage();
+    }
+
     public function render()
     {
         if(Auth::user()->role == 'admin')
         {
-             $cars = CarsModel::latest()->paginate(10);
-            return view('livewire.admin.add-cars',compact('cars'))->layout('layouts.admin');
+            // Build the query with search and filters
+            $carsQuery = CarsModel::query();
+            
+            // Apply search filter
+            if (!empty($this->search)) {
+                $carsQuery->where(function($query) {
+                    $query->where('brand', 'like', '%' . $this->search . '%')
+                          ->orWhere('plate_number', 'like', '%' . $this->search . '%')
+                          ->orWhere('color', 'like', '%' . $this->search . '%')
+                          ->orWhere('fuel', 'like', '%' . $this->search . '%');
+                });
+            }
+
+             // Apply brand filter
+            if (!empty($this->filterBrand)) {
+                $carsQuery->where('brand', $this->filterBrand);
+            }
+            
+            // Apply status filter
+            if (!empty($this->filterStatus)) {
+                $carsQuery->where('status', $this->filterStatus);
+            }
+            
+            // Apply transmission filter
+            if (!empty($this->filterTransmission)) {
+                $carsQuery->where('transmission', $this->filterTransmission);
+            }
+            
+            // Apply fuel filter
+            if (!empty($this->filterFuel)) {
+                $carsQuery->where('fuel', $this->filterFuel);
+            }
+            
+            // Get unique brands for filter dropdown
+            $brands = CarsModel::distinct()->pluck('brand')->filter()->values();
+            
+            $cars = $carsQuery->latest()->paginate(10);
+;
+            return view('livewire.admin.add-cars',compact('cars','brands'))->layout('layouts.admin');
         }
         else
         {

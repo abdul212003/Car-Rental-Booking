@@ -15,8 +15,78 @@
             </div>
         @endif
 
+        <!-- Search and Filter Section -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row g-3">
+                    <!-- Search Input -->
+                    <div class="col-md-3">
+                        <label class="form-label">Search</label>
+                        <input type="text" class="form-control" placeholder="Search by brand, plate, color..."
+                            wire:model.live="search">
+                    </div>
+
+                    <!-- Brand Filter -->
+                    <div class="col-md-2">
+                        <label class="form-label">Brand</label>
+                        <select class="form-select" wire:model.live="filterBrand">
+                            <option value="">All Brands</option>
+                            @foreach ($brands as $brandOption)
+                                <option value="{{ $brandOption }}">{{ $brandOption }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Status Filter -->
+                    <div class="col-md-2">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" wire:model.live="filterStatus">
+                            <option value="">All Status</option>
+                            <option value="available">Available</option>
+                            <option value="unavailable">Unavailable</option>
+                        </select>
+                    </div>
+
+                    <!-- Transmission Filter -->
+                    <div class="col-md-2">
+                        <label class="form-label">Transmission</label>
+                        <select class="form-select" wire:model.live="filterTransmission">
+                            <option value="">All Transmission</option>
+                            <option value="Manual">Manual</option>
+                            <option value="Automatic">Automatic</option>
+                        </select>
+                    </div>
+
+                    <!-- Fuel Filter -->
+                    <div class="col-md-2">
+                        <label class="form-label">Fuel Type</label>
+                        <select class="form-select" wire:model.live="filterFuel">
+                            <option value="">All Fuel Types</option>
+                            <option value="Unleaded">Unleaded</option>
+                            <option value="Premium">Premium</option>
+                            <option value="Diesel">Diesel</option>
+                        </select>
+                    </div>
+
+                    <!-- Reset Button -->
+                    <div class="col-md-1">
+                        <label class="form-label">&nbsp;</label>
+                        <button class="btn btn-outline-secondary w-100" wire:click="resetFilters" title="Reset Filters">
+                            <i class="fas fa-refresh"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
         <div class="card">
+            {{-- <div class="d-flex justify-content-end">
+                <input type="text" class="form-control w-25 me-3" placeholder="Search...">
+                <select class="form-select form-select-sm w-25">
+                    <option value="">Filter By</option>
+                </select>
+            </div> --}}
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-bordered">
@@ -129,7 +199,8 @@
                                 @enderror
                             </div>
                             <div class="col-md-6">
-                                <label for="brand" class="form-label">Color<span class="text-danger">*</span></label>
+                                <label for="brand" class="form-label">Color<span
+                                        class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="color" wire:model="color"
                                     placeholder="e.g., Toyota">
                                 @error('color')
@@ -139,8 +210,8 @@
                             <div class="col-md-6">
                                 <label for="brand" class="form-label">Plate Number<span
                                         class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="plate-number" wire:model="plate_number"
-                                    placeholder="e.g., Toyota">
+                                <input type="text" class="form-control" id="plate-number"
+                                    wire:model="plate_number" placeholder="e.g., Toyota">
                                 @error('plate_number')
                                     <div class="text-danger small mt-1">{{ $message }}</div>
                                 @enderror

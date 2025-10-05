@@ -16,6 +16,13 @@ class ManageBooking extends Component
     public $status;
     public $id;
 
+    // Search and Filter properties
+    public $search = '';
+    public $filterStatus = '';
+    public $filterCarBrand = '';
+    public $filterStartDate = '';
+    public $filterEndDate = '';
+
     public function updateStatus($id, $status)
     {
         $booking = BookingModel::find($id);
@@ -195,11 +202,66 @@ class ManageBooking extends Component
         }
     }
 
+     // Reset filters
+    public function resetFilters()
+    {
+        $this->search = '';
+        $this->filterStatus = '';
+        $this->filterCarBrand = '';
+        $this->filterStartDate = '';
+        $this->filterEndDate = '';
+        $this->resetPage();
+    }
+
     public function render()
     {
         if (Auth::user()->role == 'admin') {
-            $bookings = BookingModel::with('car')->latest()->paginate(10);
-            return view('livewire.admin.manage-booking', compact('bookings'))->layout('layouts.admin');
+
+            // Build the query with search and filters
+            $bookingsQuery = BookingModel::with('car');
+            
+            // Apply search filter
+            if (!empty($this->search)) {
+                $bookingsQuery->where(function($query) {
+                    $query->where('guest_name', 'like', '%' . $this->search . '%')
+                          ->orWhere('guest_email', 'like', '%' . $this->search . '%')
+                          ->orWhere('guest_phone_number', 'like', '%' . $this->search . '%')
+                          ->orWhere('gcash_reference_number', 'like', '%' . $this->search . '%')
+                          ->orWhereHas('car', function($carQuery) {
+                              $carQuery->where('brand', 'like', '%' . $this->search . '%')
+                                      ->orWhere('plate_number', 'like', '%' . $this->search . '%');
+                          });
+                });
+            }
+            
+            // Apply status filter
+            if (!empty($this->filterStatus)) {
+                $bookingsQuery->where('status', $this->filterStatus);
+            }
+            
+            // Apply car brand filter
+            if (!empty($this->filterCarBrand)) {
+                $bookingsQuery->whereHas('car', function($query) {
+                    $query->where('brand', $this->filterCarBrand);
+                });
+            }
+            
+            // Apply start date filter
+            if (!empty($this->filterStartDate)) {
+                $bookingsQuery->whereDate('start_date', '>=', $this->filterStartDate);
+            }
+            
+            // Apply end date filter
+            if (!empty($this->filterEndDate)) {
+                $bookingsQuery->whereDate('end_date', '<=', $this->filterEndDate);
+            }
+            
+            // Get unique car brands for filter dropdown
+            $carBrands = CarsModel::distinct()->pluck('brand')->filter()->values();
+            
+            $bookings = $bookingsQuery->latest()->paginate(10);
+
+            return view('livewire.admin.manage-booking', compact('bookings','carBrands'))->layout('layouts.admin');
         } else {
             abort(403);
         }

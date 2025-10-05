@@ -210,9 +210,9 @@
                                                     <select class="form-control" id="operator" wire:model="operator"
                                                         wire:change="calculateCost">
                                                         <option value="">-- Select Operator Type --</option>
-                                                        <option value="self drive">Self Drive (No additional cost)
+                                                        <option value="self_drive">Self Drive (No additional cost)
                                                         </option>
-                                                        <option value="with driver">With Driver (+₱500 per day)
+                                                        <option value="with_driver">With Driver (+₱500 per day)
                                                         </option>
                                                     </select>
                                                     @error('operator')

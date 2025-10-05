@@ -15,6 +15,10 @@ class ManageCustomerFeedback extends Component
     public $id;
     public $name,$email,$rating,$message;
 
+     // Search and Filter properties
+    public $search = '';
+    public $filterRating = '';
+
     public function editFeedback($id)
     {
         $editFeedback = CustomerFeedBackModel::find($id);
@@ -49,11 +53,37 @@ class ManageCustomerFeedback extends Component
         session()->flash('success','Feedback Delete Successfully.');
     }
 
+     
+    // Reset filters
+    public function resetFilters()
+    {
+        $this->search = '';
+        $this->filterRating = '';
+        $this->resetPage();
+    }
+
     public function render()
     {
         if(Auth::user()->role == 'admin')
         {
-             $feedback = CustomerFeedBackModel::latest()->paginate(10);
+            // Build the query with search and filters
+            $feedbackQuery = CustomerFeedBackModel::query();
+            
+            // Apply search filter
+            if (!empty($this->search)) {
+                $feedbackQuery->where(function($query) {
+                    $query->where('name', 'like', '%' . $this->search . '%')
+                        ->orWhere('email', 'like', '%' . $this->search . '%')
+                        ->orWhere('message', 'like', '%' . $this->search . '%');
+                });
+            }
+            
+            // Apply rating filter
+            if (!empty($this->filterRating)) {
+                $feedbackQuery->where('rating', $this->filterRating);
+            }
+            
+            $feedback = $feedbackQuery->latest()->paginate(10);
 
              return view('livewire.admin.manage-customer-feedback',compact('feedback'))->layout('layouts.admin');
         }
