@@ -27,12 +27,12 @@ class ManageBooking extends Component
     {
         $booking = BookingModel::find($id);
         if ($booking) {
-            // $oldStatus = $booking->status;
+            $oldStatus = $booking->status;
             
             // Store booking info for SMS before any changes
-            // $customerPhone = $booking->guest_phone_number;
-            // $customerName = $booking->guest_name;
-            // $bookingId = $booking->id;
+            $customerPhone = $booking->guest_phone_number;
+            $customerName = $booking->guest_name;
+            $bookingId = $booking->id;
             
             // If status is 'cancelled', delete the booking
             if ($status === 'cancelled') {
@@ -45,7 +45,7 @@ class ManageBooking extends Component
                 }
                 
                 // Send cancellation SMS BEFORE deletion
-                // $this->sendStatusUpdateSMS($status, $customerName, $customerPhone, $bookingId);
+                $this->sendStatusUpdateSMS($status, $customerName, $customerPhone, $bookingId);
                 
                 // Delete the booking
                 $booking->delete();
@@ -99,7 +99,7 @@ class ManageBooking extends Component
             $booking->save();
 
             // Send SMS notification for status updates (except cancelled which is handled above)
-            // $this->sendStatusUpdateSMS($status, $customerName, $customerPhone, $bookingId);
+            $this->sendStatusUpdateSMS($status, $customerName, $customerPhone, $bookingId);
 
             session()->flash('message', 'Booking status updated successfully!');
         }

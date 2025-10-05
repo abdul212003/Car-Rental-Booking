@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>RJ Car Rental | Premium Car Rental Service</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -19,11 +19,11 @@
     @livewireStyles
 </head>
 
-<body class="min-h-screen bg-center bg-no-repeat bg-cover flex items-center justify-center"
+<body class="min-h-screen bg-center bg-no-repeat bg-cover flex items-center justify-center "
     style="background-image: url('{{ asset('images/rj-pic.jpeg') }}');">
 
     <!-- Card container for forms -->
-    <div class="w-full sm:max-w-md px-6 py-8 bg-white/80 backdrop-blur-md shadow-lg rounded-xl">
+    <div class="w-full sm:max-w-md px-6 py-8 rounded-xl">
         {{ $slot }}
     </div>
 
