@@ -142,7 +142,16 @@
                                                         <i class="fas fa-car me-1"></i> Brand: {{ $car->brand }}
                                                     </div>
                                                     <div class="col-6 mb-1">
-                                                        <i class="fas fa-calendar me-1"></i> Year: {{ $car->year }}
+                                                        <i class="fas fa-calendar text-warning me-1"></i> Year:
+                                                        {{ $car->year }}
+                                                    </div>
+                                                    <div class="col-6 mb-1">
+                                                        <i class="fas fa-palette text-primary me-1"></i> Color:
+                                                        {{ $car->color }}
+                                                    </div>
+                                                    <div class="col-6 mb-1">
+                                                        <i class="fas fa-car-side text-success me-1"></i> Plate Number:
+                                                        {{ $car->plate_number }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -177,8 +186,9 @@
                                                 <div class="form-group mb-3">
                                                     <label for="PhoneNumber" class="font-weight-bold">Phone Number
                                                         <span class="text-danger">*</span></label>
-                                                    <input type="text" class="form-control"
-                                                        wire:model="guestPhone">
+                                                    <input type="number" class="form-control"
+                                                        wire:model="guestPhone"
+                                                        oninput="if(this.value.length > 11) this.value = this.value.slice(0, 11);">
                                                     @error('guestPhone')
                                                         <span class="text-danger small">{{ $message }}</span>
                                                     @enderror
@@ -200,9 +210,9 @@
                                                     <select class="form-control" id="operator" wire:model="operator"
                                                         wire:change="calculateCost">
                                                         <option value="">-- Select Operator Type --</option>
-                                                        <option value="self_drive">Self Drive (No additional cost)
+                                                        <option value="self drive">Self Drive (No additional cost)
                                                         </option>
-                                                        <option value="with_driver">With Driver (+₱500 per day)
+                                                        <option value="with driver">With Driver (+₱500 per day)
                                                         </option>
                                                     </select>
                                                     @error('operator')
@@ -291,14 +301,111 @@
                                             <div class="border rounded p-3 mb-3 bg-light"
                                                 style="max-height: 150px; overflow-y: auto;">
                                                 <div class="small text-muted">
-                                                    <p class="mb-1"><strong>1. Age Requirement:</strong> Renter must
-                                                        be at least 21 years old with valid driver's license.</p>
-                                                    <p class="mb-1"><strong>2. Security Deposit:</strong> ₱5,000.00
-                                                        held and released upon return.</p>
-                                                    <p class="mb-1"><strong>3. Fuel Policy:</strong> Return with same
-                                                        fuel level as at rental time.</p>
-                                                    <p class="mb-0"><strong>4. Insurance:</strong> Basic coverage
-                                                        included (₱10,000 deductible).</p>
+                                                    <p class="mb-1"><strong>1.</strong>The renter
+                                                        must return the vehicle to our office from the date and time
+                                                        specifiedin this agreement in the same condition when they
+                                                        receive it.</p>
+                                                    <p class="mb-1"><strong>2.</strong>The renter
+                                                        must check and maintain all fluid levels including the brake
+                                                        fluid levelin the master cylinder.</p>
+                                                    <p class="mb-1"><strong>3.</strong>The renter must
+                                                        responsible all the damages and lost of the vehicle's
+                                                        missingaccessories.</p>
+                                                    <p class="mb-0"><strong>4.</strong>The renter agrees
+                                                        to pay with the following rental payment;Rental Fee per day :
+                                                        Php 2,000.00 (Sedan) Php 3,000.00(SUV)Car Wash
+                                                        : Php 200.00
+                                                        Exceeding Hour: Php 150.00 per hour(Sedan) Php 200.00(SUV)</p>
+                                                    <p class="mb-0"><strong>5.</strong>If the renter failed to return
+                                                        the vehicle on time specified above he/she shall becharge for
+                                                        penalty of Php 150.00 per exceeding hour.</p>
+                                                    <p class="mb-0"><strong>6.</strong>All fuel consume during the
+                                                        trip shall be paid by the renter.</p>
+                                                    <p class="mb-0"><strong>7.</strong>Strictly no refund of fuel.
+                                                    </p>
+                                                    <p class="mb-0"><strong>8.</strong>Strictly NO CONTRABAND allowed
+                                                        inside the vehicle.
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <!-- Accident Section -->
+                                            <h6 class="mt-3"><i class="fas fa-burst text-danger me-2"></i> Accidents
+                                            </h6>
+                                            <div class="border rounded p-3 mb-3 bg-light"
+                                                style="max-height: 150px; overflow-y: auto;">
+                                                <div class="small text-muted">
+                                                    <p class="mb-1">In the' case where the renter
+                                                        is involved in an accident and a third party is alsoinvolved in
+                                                        injuries, the renter agrees to be held responsible for the total
+                                                        amount ofthe damages to the Vehicle and injuries to the third
+                                                        parties.</p>
+                                                </div>
+                                            </div>
+
+                                            <!-- Repair Rights Section -->
+                                            <h6 class="mt-3"><i class="fas fa-wrench text-primary me-2"></i> Repair
+                                                Rights
+                                            </h6>
+                                            <div class="border rounded p-3 mb-3 bg-light"
+                                                style="max-height: 150px; overflow-y: auto;">
+                                                <div class="small text-muted">
+                                                    <p class="mb-1">RJ Car Rental has the right to
+                                                        have the vehicle repaired at the auto collision shop ofits
+                                                        choice.</p>
+                                                </div>
+                                            </div>
+
+                                            <!-- Owner's Warranty Section -->
+                                            <h6 class="mt-3"><i class="fas fa-shield-alt text-primary me-2"></i>
+                                                Owner's
+                                                Warranty
+                                            </h6>
+                                            <div class="border rounded p-3 mb-3 bg-light"
+                                                style="max-height: 150px; overflow-y: auto;">
+                                                <div class="small text-muted">
+                                                    <p class="mb-1">The owner represent that the
+                                                        best of his knowledge and belief that the vehicle is insound and
+                                                        good condition that would affect its safe operation under normal
+                                                        use.</p>
+                                                </div>
+                                            </div>
+
+                                            <!-- Renter's Warranty Section -->
+                                            <h6 class="mt-3"><i class="fas fa-user-shield text-primary me-2"></i>
+                                                Renter's
+                                                Warranty
+                                            </h6>
+                                            <div class="border rounded p-3 mb-3 bg-light"
+                                                style="max-height: 150px; overflow-y: auto;">
+                                                <div class="small text-muted">
+                                                    <h4 class="fw-bold">The renter agrees that he/ she will NOT;</h4>
+                                                    <p class="mb-1"><strong>a.</strong>Use the vehicle to carry any
+                                                        passenger other than the renter;</p>
+                                                    <p class="mb-1"><strong>b.</strong>Allow any person to operate
+                                                        the vehicle;</p>
+                                                    <p class="mb-1"><strong>c.</strong>Operate the vehicle in
+                                                        violation of any laws or any illegal purposes that therenter
+                                                        does. The renter is responsible for all assorted tickets, fines
+                                                        and fees;</p>
+                                                    <p class="mb-1"><strong>d.</strong>Use the vehicle to push or tow
+                                                        another vehicle:</p>
+                                                    <p class="mb-1"><strong>e.</strong>Use the vehicle for any race
+                                                        or competition</p>
+                                                    <p class="mb-1"><strong>f.</strong>Operate the vehicle in
+                                                        negligence manner.</p>
+                                                </div>
+                                            </div>
+
+                                            <!-- Effectivity Section -->
+                                            <h6 class="mt-3"><i class="fas fa-calendar-check text-success me-2"></i>
+                                                Effectivity
+                                            </h6>
+                                            <div class="border rounded p-3 mb-3 bg-light"
+                                                style="max-height: 150px; overflow-y: auto;">
+                                                <div class="small text-muted">
+                                                    <p class="mb-1">This agreement shall take
+                                                        effect upon the delivery/ pick-up of the rented vehicle.</p>
                                                 </div>
                                             </div>
 
@@ -355,7 +462,7 @@
                                         <button type="button" class="btn btn-secondary"
                                             wire:click="$set('showModal', false)">Cancel</button>
                                         <button type="submit" class="btn btn-primary">
-                                            <i class="fas fa-check me-1"></i> Confirm Booking
+                                            Confirm Booking
                                         </button>
                                     </div>
                                 </form>

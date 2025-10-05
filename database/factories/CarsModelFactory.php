@@ -22,11 +22,17 @@ class CarsModelFactory extends Factory
     {
         return [
             'brand' => $this->faker->company(),
-            'model' => $this->faker->word(),
-            'year' => $this->faker->year(),
-            'price_per_day' =>  $this->faker->randomFloat(2, 1000, 5000),
+            'color' => $this->faker->safeColorName(),
+            'plate_number' => strtoupper($this->faker->bothify('???-####')),
+            'transmission' => $this->faker->randomElement(['Automatic', 'Manual']),
+            'setting_capacity' => $this->faker->numberBetween(2, 8) . ' seats',
+            'fuel' => $this->faker->randomElement(['Gasoline', 'Diesel', 'Electric', 'Hybrid']),
+            'year' => $this->faker->numberBetween(2000, now()->year),
+            'price_per_day' => $this->faker->randomFloat(2, 1000, 5000),
             'image' => null,
-            'status' => $this->faker->randomElement(['available']),
+            'interior_image' => null,
+            'additional_image' => null,
+            'status' => $this->faker->randomElement(['available', 'unavailable']),
         ];
     }
 }

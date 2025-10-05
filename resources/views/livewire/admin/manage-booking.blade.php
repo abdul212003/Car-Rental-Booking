@@ -19,6 +19,13 @@
                 </div>
             @endif
 
+            @if (session('failed'))
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ session('failed') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
             @if (session('error'))
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     {{ session('error') }}
@@ -51,9 +58,13 @@
                     <table class="table table-bordered">
                         <thead>
                             <tr>
+                                <th>Car Id</th>
+                                <th>Car Brand</th>
+                                <th>Car Plate Number</th>
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Phone Number</th>
+                                <th>Operator</th>
                                 <th>Start Date</th>
                                 <th>End Date</th>
                                 <th>Total Days</th>
@@ -68,9 +79,13 @@
                         <tbody>
                             @forelse ($bookings as $booking)
                                 <tr>
+                                    <td>{{ $booking->car_id }}</td>
+                                    <td>{{ $booking->car->brand }}</td>
+                                    <td>{{ $booking->car->plate_number }}</td>
                                     <td>{{ $booking->guest_name }}</td>
                                     <td>{{ $booking->guest_email }}</td>
                                     <td>{{ $booking->guest_phone_number }}</td>
+                                    <td><span class="badge bg-info rounded">{{ $booking->operator }}</span></td>
                                     <td>{{ $booking->start_date->format('Y-m-d') }}</td>
                                     <td>{{ $booking->end_date->format('Y-m-d') }}</td>
                                     <td>{{ $booking->total_days }}</td>

@@ -184,14 +184,14 @@ class CarSearch extends Component
         }
 
         // Apply price filter
-        if (!empty($this->searchPrice)) {
-            $query->where('price_per_day', '<=', $this->searchPrice);
-        }
-         else 
-        {
-            // Always show available cars by default
-            $query->whereIn('status' , ['available','unavailable']);
-        }
+        // if (!empty($this->searchPrice)) {
+        //     $query->where('price_per_day', '<=', $this->searchPrice);
+        // }
+        //  else 
+        // {
+        //     // Always show available cars by default
+        //     $query->whereIn('status' , ['available','unavailable']);
+        // }
 
         // // Apply availability filter based on dates
         // if (!empty($this->searchStartDate) && !empty($this->searchEndDate)) {
@@ -209,14 +209,4 @@ class CarSearch extends Component
         $this->reset(['searchBrand','searchPrice','searchStartDate','searchEndDate']);
         $this->resetPage();
     }
-
-    // public function updatingSearchStartDate()
-    // {
-    //     $this->resetPage();
-    // }
-
-    // public function updatingSearchEndDate()
-    // {
-    //     $this->resetPage();
-    // }
 }

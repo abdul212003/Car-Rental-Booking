@@ -13,7 +13,6 @@ class BookingModel extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        // 'user_id',
         'guest_name',
         'guest_email',
         'guest_phone_number',
@@ -38,12 +37,6 @@ class BookingModel extends Model
         'start_date' => 'date',
         'end_date' => 'date',
     ];
-
-    // public function user()
-    // {
-    //     return $this->belongsTo(User::class);
-    // }
-    
 
     public function car()
     {

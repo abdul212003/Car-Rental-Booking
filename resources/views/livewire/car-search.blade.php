@@ -31,14 +31,14 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4">
+                        {{-- <div class="col-md-4">
                             <label class="form-label fw-semibold">Max Price</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light border-end-0">₱</span>
                                 <input type="number" wire:model.live="searchPrice" class="form-control"
                                     placeholder="Max price per day">
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
 
                     <div class="mt-4 d-flex justify-content-between align-items-center">
@@ -175,7 +175,7 @@
                     <!-- Car Image with Status Badge -->
                     <div class="position-relative">
                         <img src="{{ $car->image ? asset('storage/' . $car->image) : asset('storage/images/placeholder-car.jpg') }}"
-                            class="card-img-top" alt="{{ $car->brand }} {{ $car->model }}"
+                            class="card-img-top" alt="{{ $car->brand }} {{ $car->color }}"
                             style="height: 200px; object-fit: cover;">
 
                         <span class="position-absolute top-0 end-0 m-2 badge {{ $statusClass }} fs-6">
@@ -185,9 +185,10 @@
 
                     <div class="card-body d-flex flex-column p-3">
                         <!-- Car Details -->
-                        <h5 class="card-title mb-2">{{ $car->brand }} {{ $car->model }}</h5>
+                        <h5 class="card-title mb-2">{{ $car->brand }} <span
+                                class="badge bg-secondary">{{ $car->color }} </span></h5>
                         <p class="text-muted small mb-3">{{ $car->year }} • {{ $car->fuel }} •
-                            {{ $car->transmission }}</p>
+                            {{ $car->transmission }} • <span class="fw-bolder">{{ $car->plate_number }}</span></p>
 
                         <div class="mb-3">
                             <div class="d-flex align-items-center mb-2">

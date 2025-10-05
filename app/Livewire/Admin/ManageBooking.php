@@ -43,7 +43,7 @@ class ManageBooking extends Component
                 // Delete the booking
                 $booking->delete();
                 
-                session()->flash('success', 'Booking cancelled and deleted successfully!');
+                session()->flash('failed', 'Booking cancelled and deleted successfully!');
                 return;
             }
 
@@ -198,7 +198,7 @@ class ManageBooking extends Component
     public function render()
     {
         if (Auth::user()->role == 'admin') {
-            $bookings = BookingModel::latest()->paginate(10);
+            $bookings = BookingModel::with('car')->latest()->paginate(10);
             return view('livewire.admin.manage-booking', compact('bookings'))->layout('layouts.admin');
         } else {
             abort(403);
