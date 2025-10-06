@@ -8,6 +8,7 @@ use App\Models\CarsModel;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use App\Services\SkyioService;
 
 class Booking extends Component
 {
@@ -160,7 +161,7 @@ class Booking extends Component
         $validIdPath = $this->requirements_valid_id_photo->store('requirements_valid_id_photo', 'public');
 
         //Create the booking
-         BookingModel::create([
+        $booking =  BookingModel::create([
             'guest_name' => $this->guestName,
             'guest_email' => $this->guestEmail,
             'guest_phone_number' => $this->guestPhone,
@@ -182,13 +183,63 @@ class Booking extends Component
          // Store user email in session for future bookings
         session(['current_booking_email' => $this->guestEmail]);
         session(['last_booking_email' => $this->guestEmail]); // Backup session key
-        
+
+          // Send SMS to admin about new booking
+        $this->sendNewBookingSMSToAdmin($booking);
 
         $this->showModal = false;
-        session()->flash('message','Booking submitted successfully! Please wait for admin confirmation.');
+        session()->flash('success','Booking submitted successfully! Please wait for admin confirmation.');
         $this->dispatch('bookingCreated');
 
     }
+
+    protected function sendNewBookingSMSToAdmin($booking)
+    {
+        $skyioService = new SkyioService();
+        $adminPhone = env('ADMIN_PHONE_NUMBER');
+
+        if (!$adminPhone) {
+            \Log::warning('Admin phone number not set in environment variables.');
+            return;
+        }
+
+        // Format admin phone number
+        $formattedAdminPhone = $this->formatPhoneNumber($adminPhone);
+
+        // Check if phone number is properly formatted
+        if (!str_starts_with($formattedAdminPhone, '+63') || strlen($formattedAdminPhone) !== 13) {
+            \Log::warning('Admin phone number format invalid. Required format: 09XXXXXXXXX');
+            return;
+        }
+
+        $carDetails = $this->car->brand . ' ' . $this->car->plate_number;
+        $message = "NEW BOOKING ALERT!\nBooking ID: #{$booking->id}\nCustomer: {$booking->guest_name}\nCar: {$carDetails}\nDates: {$booking->start_date} to {$booking->end_date}\nTotal: ₱{$booking->total_cost}\nPlease check admin panel for details.";
+
+        $response = $skyioService->sendSMS($formattedAdminPhone, $message);
+
+        // Log SMS response for debugging
+        if (isset($response['error'])) {
+            \Log::error('Failed to send admin SMS: ' . $response['error']);
+        } else {
+            \Log::info('Admin notification SMS sent successfully');
+        }
+    }
+
+    protected function formatPhoneNumber($phone)
+    {
+        // Remove all non-digit characters
+        $phone = preg_replace('/\D/', '', $phone);
+        
+        // Validate if it matches 09 + 9 digits (11 digits total)
+        if (strlen($phone) === 11 && str_starts_with($phone, '09')) {
+            // Convert 09171234567 to +639171234567
+            return '+63' . substr($phone, 1);
+        }
+        
+        // If it doesn't match the required format, return as is (will likely fail SMS sending)
+        return $phone;
+    }
+
     public function render()
     {
         return view('livewire.booking')->layout('layouts.app');

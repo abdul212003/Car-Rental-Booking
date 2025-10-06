@@ -16,7 +16,7 @@ class SkyioService
         $this->apiKey = config('services.skyio.api_key');
     }
 
-      public function sendSMS($to, $message, $from = null)
+    public function sendSMS($to, $message, $from = null)
     {
         try {
             $payload = [
