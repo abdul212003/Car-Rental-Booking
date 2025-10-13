@@ -41,17 +41,6 @@
             @endif
         @endif
 
-        <!-- Add this in your card header or somewhere visible -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h5>FOR TESTING</h5>
-            <div>
-                <button class="btn btn-info btn-sm" wire:click="testSMSFunctionality"
-                    wire:confirm="This will send a test SMS. Continue?">
-                    <i class="fas fa-paper-plane"></i> Test SMS
-                </button>
-            </div>
-        </div>
-
         <!-- Search and Filter Section -->
         <div class="card mb-4">
             <div class="card-body">
@@ -119,6 +108,7 @@
                                 <th>Car Id</th>
                                 <th>Car Brand</th>
                                 <th>Car Plate Number</th>
+                                <th>Booking Id</th>
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Phone Number</th>
@@ -140,6 +130,7 @@
                                     <td>{{ $booking->car_id }}</td>
                                     <td>{{ $booking->car->brand }}</td>
                                     <td>{{ $booking->car->plate_number }}</td>
+                                    <td>{{ $booking->id }}</td>
                                     <td>{{ $booking->guest_name }}</td>
                                     <td>{{ $booking->guest_email }}</td>
                                     <td>{{ $booking->guest_phone_number }}</td>

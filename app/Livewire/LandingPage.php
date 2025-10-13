@@ -5,6 +5,8 @@ namespace App\Livewire;
 use Livewire\Component;
 use App\Models\CustomerFeedBackModel;
 use App\Models\ContactUsModel;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ContactFormMail;
 
 class LandingPage extends Component
 {
@@ -24,12 +26,14 @@ class LandingPage extends Component
             'contact_message' => 'required|min:5',
         ]);
 
-        ContactUsModel::create([
+        $contact = ContactUsModel::create([
             'contact_name' => $this->contact_name,
             'contact_email' => $this->contact_email,
             'contact_subject' => $this->contact_subject,
             'contact_message' => $this->contact_message,
         ]);
+
+        Mail::to('gilsilverioalviorjr@gmail.com')->send(new ContactFormMail($contact));
 
         $this->reset(['contact_name','contact_email','contact_subject','contact_message']);
 

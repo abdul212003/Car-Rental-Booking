@@ -124,7 +124,7 @@ class ManageBooking extends Component
         }
 
         $messages = [
-            'confirmed' => "Hello {$customerName}, your booking #{$bookingId} has been accepted. Thank you for choosing us!",
+            'confirmed' => "Hello {$customerName}, your booking #{$bookingId} has been accepted. Pickup point: Villarica Midsayap Cotabato. Thank you for choosing us!",
             'cancelled' => "Hello {$customerName}, we're sorry to inform you that your booking #{$bookingId} has been declined. Please contact us for more information.",
             'returned' => "Hello {$customerName}, vehicle returned. Booking #{$bookingId} complete.",
             'rented_out' => "Hello {$customerName}, your booking #{$bookingId} has been rented out. Enjoy your trip!"
@@ -158,49 +158,49 @@ class ManageBooking extends Component
     }
 
     // Add this method to your ManageBooking component for testing
-    public function testSMSFunctionality()
-    {
-        // Create a test booking or use an existing one
-        $testBooking = BookingModel::first();
+    // public function testSMSFunctionality()
+    // {
+    //     // Create a test booking or use an existing one
+    //     $testBooking = BookingModel::first();
         
-        if (!$testBooking) {
-            session()->flash('error', 'No bookings found for testing.');
-            return;
-        }
+    //     if (!$testBooking) {
+    //         session()->flash('error', 'No bookings found for testing.');
+    //         return;
+    //     }
 
-        $skyioService = new SkyioService();
+    //     $skyioService = new SkyioService();
         
-        // Test phone number - replace with your actual phone number
-        $testPhone = '09856056771'; // Replace with your real Philippine number
+    //     // Test phone number - replace with your actual phone number
+    //     $testPhone = '09856056771'; // Replace with your real Philippine number
         
-        // Test message
-        $testMessage = "TEST SMS: Hello {$testBooking->guest_name}, this is a test message from your car rental system. Booking #{$testBooking->id}";
+    //     // Test message
+    //     $testMessage = "TEST SMS: Hello {$testBooking->guest_name}, this is a test message from your car rental system. Booking #{$testBooking->id}";
         
-        // Format phone number
-        $formattedPhone = $this->formatPhoneNumber($testPhone);
+    //     // Format phone number
+    //     $formattedPhone = $this->formatPhoneNumber($testPhone);
         
-        // Check phone format
-        if (!str_starts_with($formattedPhone, '+63') || strlen($formattedPhone) !== 13) {
-            session()->flash('error', "Test failed: Phone number format invalid. Got: {$formattedPhone}");
-            return;
-        }
+    //     // Check phone format
+    //     if (!str_starts_with($formattedPhone, '+63') || strlen($formattedPhone) !== 13) {
+    //         session()->flash('error', "Test failed: Phone number format invalid. Got: {$formattedPhone}");
+    //         return;
+    //     }
         
-        session()->flash('info', "Attempting to send test SMS to: {$formattedPhone}");
+    //     session()->flash('info', "Attempting to send test SMS to: {$formattedPhone}");
         
-        try {
-            $response = $skyioService->sendSMS($formattedPhone, $testMessage);
+    //     try {
+    //         $response = $skyioService->sendSMS($formattedPhone, $testMessage);
             
-            if (isset($response['success']) && $response['success']) {
-                session()->flash('success', "✅ Test SMS sent successfully! Message ID: " . ($response['message_id'] ?? 'N/A'));
-            } elseif (isset($response['error'])) {
-                session()->flash('error', "❌ SMS failed: " . $response['error']);
-            } else {
-                session()->flash('warning', "⚠️ Unknown response: " . json_encode($response));
-            }
-        } catch (\Exception $e) {
-            session()->flash('error', "❌ Exception: " . $e->getMessage());
-        }
-    }
+    //         if (isset($response['success']) && $response['success']) {
+    //             session()->flash('success', "✅ Test SMS sent successfully! Message ID: " . ($response['message_id'] ?? 'N/A'));
+    //         } elseif (isset($response['error'])) {
+    //             session()->flash('error', "❌ SMS failed: " . $response['error']);
+    //         } else {
+    //             session()->flash('warning', "⚠️ Unknown response: " . json_encode($response));
+    //         }
+    //     } catch (\Exception $e) {
+    //         session()->flash('error', "❌ Exception: " . $e->getMessage());
+    //     }
+    // }
 
      // Reset filters
     public function resetFilters()

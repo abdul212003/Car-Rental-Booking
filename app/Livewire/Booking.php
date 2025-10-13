@@ -80,6 +80,42 @@ class Booking extends Component
         }
     }
 
+    // public function calculateCost()
+    // {
+    //     if ($this->startDate && $this->endDate) {
+    //         try {
+    //             $start = Carbon::createFromFormat('Y-m-d', $this->startDate);
+    //             $end = Carbon::createFromFormat('Y-m-d', $this->endDate);
+
+    //             if ($end->greaterThanOrEqualTo($start)) {
+    //                 $this->totalDays = $start->diffInDays($end) + 1;
+                    
+    //                 // Calculate base cost (car rental only)
+    //                 $baseCost = $this->totalDays * $this->car->price_per_day;
+                    
+    //                 // Calculate operator fee
+    //                 $this->calculateOperatorFee();
+    //                 $operatorTotalFee = $this->operatorFee * $this->totalDays;
+                    
+    //                 // Total cost = base cost + operator fee
+    //                 $this->totalCost = $baseCost + $operatorTotalFee;
+    //             } else {
+    //                 $this->totalDays = 0;
+    //                 $this->totalCost = 0;
+    //                 $this->operatorFee = 0;
+    //             }
+    //         } catch (\Exception $e) {
+    //             $this->totalDays = 0;
+    //             $this->totalCost = 0;
+    //             $this->operatorFee = 0;
+    //         }
+    //     } else {
+    //         $this->totalDays = 0;
+    //         $this->totalCost = 0;
+    //         $this->operatorFee = 0;
+    //     }
+    // }
+
     public function calculateCost()
     {
         if ($this->startDate && $this->endDate) {
@@ -88,7 +124,13 @@ class Booking extends Component
                 $end = Carbon::createFromFormat('Y-m-d', $this->endDate);
 
                 if ($end->greaterThanOrEqualTo($start)) {
-                    $this->totalDays = $start->diffInDays($end) + 1;
+                    // Calculate the actual difference in days (no +1)
+                    $this->totalDays = $start->diffInDays($end);
+                    
+                    // Ensure minimum 1 day rental
+                    if ($this->totalDays === 0) {
+                        $this->totalDays = 1;
+                    }
                     
                     // Calculate base cost (car rental only)
                     $baseCost = $this->totalDays * $this->car->price_per_day;
@@ -213,7 +255,14 @@ class Booking extends Component
         }
 
         $carDetails = $this->car->brand . ' ' . $this->car->plate_number;
-        $message = "NEW BOOKING ALERT!\nBooking ID: #{$booking->id}\nCustomer: {$booking->guest_name}\nCar: {$carDetails}\nDates: {$booking->start_date} to {$booking->end_date}\nTotal: ₱{$booking->total_cost}\nPlease check admin panel for details.";
+        $message = "NEW BOOKING ALERT!\n"
+        . "Booking ID: #{$booking->id}\n"
+        . "Customer: {$booking->guest_name}\n"
+        . "Car: {$carDetails}\n"
+        . "Dates: " . Carbon::parse($booking->start_date)->format('Y-m-d')
+        . " to " . Carbon::parse($booking->end_date)->format('Y-m-d') . "\n"
+        . "Total: ₱{$booking->total_cost}\n"
+        . "Please check admin panel for details.";
 
         $response = $skyioService->sendSMS($formattedAdminPhone, $message);
 

@@ -423,9 +423,8 @@
                                             <h6 class="mt-3"><i class="fas fa-mobile-alt me-2"></i> GCash Payment
                                             </h6>
                                             <p class="small text-muted mb-2">Send payment to: <span
-                                                    class="fw-bolder fs-6">Gil
-                                                    Alvior Jr.</span>
-                                                <strong>(09XX-XXX-XXXX)</strong>
+                                                    class="fw-bolder fs-6">AN***E JA**S V.</span>
+                                                <strong>(09952184322)</strong>
                                             </p>
 
                                             <div class="form-group mb-3">

@@ -77,7 +77,7 @@
             <div class="row align-items-center">
                 <div class="col-lg-6 mb-5 mb-lg-0">
                     <h2 class="mb-4">About RJ Car Rentals</h2>
-                    <p class="lead mb-4">We've been providing premium car rental services since 2010, with a commitment
+                    <p class="lead mb-4">We've been providing premium car rental services since 2021, with a commitment
                         to excellence and customer satisfaction.</p>
                     <p class="mb-4">Our mission is to make luxury car rentals accessible to everyone. With a diverse
                         fleet of well-maintained vehicles and a team of dedicated professionals, we ensure that every
@@ -91,11 +91,11 @@
                             <p class="text-muted">Happy Customers</p>
                         </div>
                         <div class="col-4 text-center">
-                            <div class="stats-number">50+</div>
+                            <div class="stats-number">15+</div>
                             <p class="text-muted">Premium Vehicles</p>
                         </div>
                         <div class="col-4 text-center">
-                            <div class="stats-number">15</div>
+                            <div class="stats-number">4</div>
                             <p class="text-muted">Years Experience</p>
                         </div>
                     </div>
@@ -106,104 +106,6 @@
             </div>
         </div>
     </section>
-
-    {{-- <!-- Feedback Section -->
-    <section id="feedback" class="section-padding">
-        <div class="container">
-            <h2 class="text-center mb-5">Customer Feedback</h2>
-            <div class="row">
-                @forelse($Feedbacks as $Feedback)
-                    <div class="col-md-4 mb-4">
-                        <div class="card feedback-card h-100">
-                            <div class="card-body">
-                                <div class="d-flex mb-3">
-                                    <div class="flex-grow-1 ms-3">
-                                        <h5 class="mb-0">{{ $Feedback->name }}</h5>
-                                        <div
-                                            class="fw-normal 
-                                            @if ($Feedback->rating === 'Excellent') rating-excellent
-                                            @elseif($Feedback->rating === 'Very Good') rating-very-good
-                                            @elseif($Feedback->rating === 'Good') rating-good @endif">
-                                            <p>{{ $Feedback->rating }}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <p class="card-text">"{{ $Feedback->message }}"</p>
-                                <small class="text-muted">{{ $Feedback->created_at->format('M d, Y') }}</small>
-                            </div>
-                        </div>
-                    </div>
-                @empty
-                    <div class="col-12 text-center">
-                        <p class="text-muted">No feedback available yet. Be the first to share your experience!</p>
-                    </div>
-                @endforelse
-            </div>
-
-            <!-- Feedback Form -->
-            <div class="row mt-5">
-                <div class="col-lg-8 mx-auto">
-                    <div class="card feedback-card">
-                        <div class="card-header text-white">
-                            <h4 class="mb-0">Share Your Experience</h4>
-                        </div>
-                        <div class="card-body">
-                            @if (session()->has('feedback_success'))
-                                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    {{ session('feedback_success') }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                                </div>
-                            @endif
-
-                            <form wire:submit.prevent="submitFeedback">
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="name" class="form-label">Your Name</label>
-                                        <input type="text" class="form-control" id="name" wire:model="name"
-                                            required>
-                                        @error('name')
-                                            <span class="text-danger small">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="email" class="form-label">Email Address</label>
-                                        <input type="email" class="form-control" id="email" wire:model="email"
-                                            required>
-                                        @error('email')
-                                            <span class="text-danger small">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="rating" class="form-label">Rating</label>
-                                    <select class="form-select" id="rating" required wire:model="rating">
-                                        <option value="">Select your rating</option>
-                                        <option value="Excellent">Excellent</option>
-                                        <option value="Very Good">Very Good</option>
-                                        <option value="Good">Good</option>
-                                    </select>
-                                    @error('rating')
-                                        <span class="text-danger small">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <div class="mb-3">
-                                    <label for="message" class="form-label">Your Feedback</label>
-                                    <textarea class="form-control" id="message" rows="4" required wire:model="message"></textarea>
-                                    @error('message')
-                                        <span class="text-danger small">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <button type="submit" class="btn btn-primary">
-                                    Submit Feedback
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section> --}}
-
 
     <!-- Feedback Section - Simple Star Display -->
     <section id="feedback" class="section-padding">
