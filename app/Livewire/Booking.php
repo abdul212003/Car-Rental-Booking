@@ -255,14 +255,16 @@ class Booking extends Component
         }
 
         $carDetails = $this->car->brand . ' ' . $this->car->plate_number;
-        $message = "NEW BOOKING ALERT!\n"
-        . "Booking ID: #{$booking->id}\n"
-        . "Customer: {$booking->guest_name}\n"
-        . "Car: {$carDetails}\n"
-        . "Dates: " . Carbon::parse($booking->start_date)->format('Y-m-d')
-        . " to " . Carbon::parse($booking->end_date)->format('Y-m-d') . "\n"
-        . "Total: ₱{$booking->total_cost}\n"
-        . "Please check admin panel for details.";
+        $message =
+                "NEW BOOKING CONFIRMATION\n\n" .
+                "Booking Reference : #{$booking->id}\n" .
+                "Customer Name     : {$booking->guest_name}\n" .
+                "Vehicle Booked    : {$carDetails}\n" .
+                "Booking Dates     : " . Carbon::parse($booking->start_date)->format('M d, Y') .
+                " to " . Carbon::parse($booking->end_date)->format('M d, Y') . "\n" .
+                "Total Amount Due  : PHP " . number_format($booking->total_cost, 2) . "\n\n" .
+                "Please review the booking details in the admin panel.";
+
 
         $response = $skyioService->sendSMS($formattedAdminPhone, $message);
 

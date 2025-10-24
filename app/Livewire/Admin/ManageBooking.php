@@ -122,13 +122,29 @@ class ManageBooking extends Component
             session()->flash('warning', "Status updated but phone number format invalid. Required format: 09XXXXXXXXX");
             return;
         }
-
         $messages = [
-            'confirmed' => "Hello {$customerName}, your booking #{$bookingId} has been accepted. Pickup point: Villarica Midsayap Cotabato. Thank you for choosing us!",
-            'cancelled' => "Hello {$customerName}, we're sorry to inform you that your booking #{$bookingId} has been declined. Please contact us for more information.",
-            'returned' => "Hello {$customerName}, vehicle returned. Booking #{$bookingId} complete.",
-            'rented_out' => "Hello {$customerName}, your booking #{$bookingId} has been rented out. Enjoy your trip!"
+            'confirmed' => 
+                "Hello {$customerName},\n\n" .
+                "Good news! Your booking (#{$bookingId}) is confirmed.\n" .
+                "You can pick up your car at Villarica, Midsayap, Cotabato.\n\n" .
+                "We look forward to serving you!",
+
+            'cancelled' => 
+                "Hello {$customerName},\n\n" .
+                "We’re sorry, but your booking (#{$bookingId}) couldn’t be confirmed.\n" .
+                "Please reach out to us if you’d like more information.",
+
+            'returned' => 
+                "Hello {$customerName},\n\n" .
+                "Your booking (#{$bookingId}) is now complete. The vehicle has been returned.\n" .
+                "Thank you for choosing RJ Car Rental and Services.",
+
+            'rented_out' => 
+                "Hello {$customerName},\n\n" .
+                "Your booking (#{$bookingId}) is now in progress.\n" .
+                "Have a safe and enjoyable trip!",
         ];
+
 
         if (isset($messages[$status])) {
             $response = $skyioService->sendSMS($formattedPhone, $messages[$status]);
