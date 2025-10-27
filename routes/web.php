@@ -8,6 +8,7 @@ use App\Livewire\Admin\ManageCustomerFeedback;
 use App\Livewire\Admin\ManageContactUs;
 use App\Livewire\CarSearch;
 use App\Livewire\LandingPage;
+use App\Livewire\User\Profile;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -31,6 +32,7 @@ Route::get('/logout', function()
     return redirect()->route('login');
 })->name('logout');
 
+Route::get('/user/profile', Profile::class)->name('user.profile');
 Route::get('/managecontact',ManageContactUs::class)->name('admin.manage-contact-us');
 Route::get('/managefeedback', ManageCustomerFeedback::class)->name('admin.manage-customer-feedback');
 Route::get('/searchcar',CarSearch::class)->name('car-search');
