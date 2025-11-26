@@ -102,6 +102,7 @@
                                 <th>Plate Number</th>
                                 <th>Year</th>
                                 <th>Price/Day</th>
+                                <th>Downpayment</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
@@ -130,6 +131,7 @@
                                     <td>{{ $car->plate_number }}</td>
                                     <td>{{ $car->year }}</td>
                                     <td>₱{{ number_format($car->price_per_day, 2) }}</td>
+                                    <td>₱{{ number_format($car->downpayment, 2) }}</td>
                                     <td>
                                         <span
                                             class="badge bg-{{ $car->status == 'available' ? 'success' : ($car->status == 'unavailable' ? 'danger' : 'warning') }}">
@@ -275,6 +277,15 @@
                                 <input type="number" step="0.01" class="form-control" id="price_per_day"
                                     wire:model="price_per_day" min="0" placeholder="e.g., 1500.00">
                                 @error('price_per_day')
+                                    <div class="text-danger small mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-4">
+                                <label for="price_per_day" class="form-label">Downpayment (₱) <span
+                                        class="text-danger">*</span></label>
+                                <input type="number" step="0.01" class="form-control" id="price_per_day"
+                                    wire:model="downpayment" min="0" placeholder="e.g., 1500.00">
+                                @error('downpayment')
                                     <div class="text-danger small mt-1">{{ $message }}</div>
                                 @enderror
                             </div>

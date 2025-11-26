@@ -22,26 +22,26 @@ class Booking extends Component
     public $totalDays = 0;
     public $totalCost = 0;
     public $requirements_valid_id_photo;
-    public $gcashReferenceNumber;
-    public $gcashReceipt;
     public $guestName;
     public $guestEmail;
     public $guestPhone;
     public $agreeTerms = false;
     public $destination;
-    public $operator = 'self drive';
+    public $operator = 'self_drive';
     public $operatorFee = 0;
+    public $paymentPlan = ''; 
+    public $downpaymentAmount = 0;
+    public $remainingBalance = 0;
 
     protected $listeners = ['openBookingModal' => 'openModal'];
 
     protected $rules = [
         'destination' => 'required|string|max:255',
         'operator' => 'required|in:self_drive,with_driver',
+        'paymentPlan' => 'required|in:downpayment,full_payment',
         'startDate' => 'required|date|after_or_equal:today',
         'endDate'   => 'required|date|after_or_equal:startDate',
-        'gcashReferenceNumber' => 'required|string|digits:13',
-        'requirements_valid_id_photo' => 'required|image|max:2048',
-        'gcashReceipt' => 'required|image|max:2048', // 2MB Max
+        'requirements_valid_id_photo' => 'required|image|max:5048',
         'guestName' => 'required|string|max:255',
         'guestEmail' => 'required|email',
         'guestPhone' => 'required|regex:/^09\d{9}$/',
@@ -49,13 +49,19 @@ class Booking extends Component
     ];
 
     protected $messages = [
-        'agreeTerms.accepted' => 'You must accept the terms and conditions to proceed.'
+        'agreeTerms.accepted' => 'You must accept the terms and conditions to proceed.',
+        'paymentPlan.required' => 'Please select a payment plan.'
     ];
 
     public function openModal($carId)
     {
         $this->resetValidation();
-        $this->reset(['destination','operator','startDate', 'endDate', 'totalDays', 'totalCost', 'gcashReferenceNumber', 'gcashReceipt','guestName','guestEmail','guestPhone','agreeTerms','requirements_valid_id_photo']);
+        $this->reset([
+            'destination', 'operator', 'startDate', 'endDate', 'totalDays', 
+            'totalCost', 'guestName', 'guestEmail', 'guestPhone', 'agreeTerms',
+            'requirements_valid_id_photo', 'paymentPlan', 'downpaymentAmount', 'remainingBalance'
+        ]);
+        
         $this->carId = $carId;
         $this->car = CarsModel::findOrFail($carId);
         $this->operator = 'self_drive';
@@ -67,7 +73,6 @@ class Booking extends Component
         }
 
         $this->showModal = true;
-
     }
 
     public function calculateOperatorFee()
@@ -80,42 +85,6 @@ class Booking extends Component
         }
     }
 
-    // public function calculateCost()
-    // {
-    //     if ($this->startDate && $this->endDate) {
-    //         try {
-    //             $start = Carbon::createFromFormat('Y-m-d', $this->startDate);
-    //             $end = Carbon::createFromFormat('Y-m-d', $this->endDate);
-
-    //             if ($end->greaterThanOrEqualTo($start)) {
-    //                 $this->totalDays = $start->diffInDays($end) + 1;
-                    
-    //                 // Calculate base cost (car rental only)
-    //                 $baseCost = $this->totalDays * $this->car->price_per_day;
-                    
-    //                 // Calculate operator fee
-    //                 $this->calculateOperatorFee();
-    //                 $operatorTotalFee = $this->operatorFee * $this->totalDays;
-                    
-    //                 // Total cost = base cost + operator fee
-    //                 $this->totalCost = $baseCost + $operatorTotalFee;
-    //             } else {
-    //                 $this->totalDays = 0;
-    //                 $this->totalCost = 0;
-    //                 $this->operatorFee = 0;
-    //             }
-    //         } catch (\Exception $e) {
-    //             $this->totalDays = 0;
-    //             $this->totalCost = 0;
-    //             $this->operatorFee = 0;
-    //         }
-    //     } else {
-    //         $this->totalDays = 0;
-    //         $this->totalCost = 0;
-    //         $this->operatorFee = 0;
-    //     }
-    // }
-
     public function calculateCost()
     {
         if ($this->startDate && $this->endDate) {
@@ -124,7 +93,7 @@ class Booking extends Component
                 $end = Carbon::createFromFormat('Y-m-d', $this->endDate);
 
                 if ($end->greaterThanOrEqualTo($start)) {
-                    // Calculate the actual difference in days (no +1)
+                    // Calculate the actual difference in days
                     $this->totalDays = $start->diffInDays($end);
                     
                     // Ensure minimum 1 day rental
@@ -132,36 +101,49 @@ class Booking extends Component
                         $this->totalDays = 1;
                     }
                     
-                    // Calculate base cost (car rental only)
-                    $baseCost = $this->totalDays * $this->car->price_per_day;
-                    
                     // Calculate operator fee
                     $this->calculateOperatorFee();
                     $operatorTotalFee = $this->operatorFee * $this->totalDays;
                     
-                    // Total cost = base cost + operator fee
-                    $this->totalCost = $baseCost + $operatorTotalFee;
+                    // Calculate cost based on payment plan
+                    if ($this->paymentPlan === 'downpayment') {
+                        // For downpayment: only charge downpayment + operator fee
+                        $this->downpaymentAmount = $this->car->downpayment;
+                        $this->totalCost = $this->downpaymentAmount + $operatorTotalFee;
+                        
+                        // Calculate remaining balance (full rental cost - downpayment)
+                        $fullRentalCost = $this->totalDays * $this->car->price_per_day;
+                        $this->remainingBalance = $fullRentalCost - $this->downpaymentAmount;
+                    } else {
+                        // For full payment: charge per day rate + operator fee
+                        $baseCost = $this->totalDays * $this->car->price_per_day;
+                        $this->totalCost = $baseCost + $operatorTotalFee;
+                        $this->downpaymentAmount = 0;
+                        $this->remainingBalance = 0;
+                    }
                 } else {
-                    $this->totalDays = 0;
-                    $this->totalCost = 0;
-                    $this->operatorFee = 0;
+                    $this->resetCostCalculations();
                 }
             } catch (\Exception $e) {
-                $this->totalDays = 0;
-                $this->totalCost = 0;
-                $this->operatorFee = 0;
+                $this->resetCostCalculations();
             }
         } else {
-            $this->totalDays = 0;
-            $this->totalCost = 0;
-            $this->operatorFee = 0;
+            $this->resetCostCalculations();
         }
     }
 
+    protected function resetCostCalculations()
+    {
+        $this->totalDays = 0;
+        $this->totalCost = 0;
+        $this->operatorFee = 0;
+        $this->downpaymentAmount = 0;
+        $this->remainingBalance = 0;
+    }
 
     public function updated($propertyName)
     {
-        if (in_array($propertyName, ['startDate', 'endDate','operator'])) {
+        if (in_array($propertyName, ['startDate', 'endDate', 'operator', 'paymentPlan'])) {
             $this->calculateCost();
         }
 
@@ -179,7 +161,6 @@ class Booking extends Component
             ->whereIn('status', ['confirmed', 'pending'])
             ->where(function ($query) {
                 $query->where(function ($q) {
-                    // New booking overlaps with existing booking
                     $q->where('start_date', '<=', $this->endDate)
                         ->where('end_date', '>=', $this->startDate);
                 });
@@ -193,17 +174,15 @@ class Booking extends Component
 
         // Check availability again before booking
         if (!$this->car->isAvailable($this->startDate, $this->endDate)) {
-            session()->flash('error', 'Sorry this car is no longer available for the  selected dates.');
-
+            session()->flash('error', 'Sorry this car is no longer available for the selected dates.');
             return;
         }
 
-        // Store the receipt image
-        $receiptPath = $this->gcashReceipt->store('gcash-receipts', 'public');
+        // Store the valid ID image
         $validIdPath = $this->requirements_valid_id_photo->store('requirements_valid_id_photo', 'public');
 
-        //Create the booking
-        $booking =  BookingModel::create([
+        // Create the booking
+        $booking = BookingModel::create([
             'guest_name' => $this->guestName,
             'guest_email' => $this->guestEmail,
             'guest_phone_number' => $this->guestPhone,
@@ -216,26 +195,66 @@ class Booking extends Component
             'operator_fee' => $this->operatorFee,
             'operator_total_fee' => $this->operatorFee * $this->totalDays,
             'destination' => $this->destination,
+            'payment_plan' => $this->paymentPlan,
+            'downpayment_amount' => $this->downpaymentAmount,
+            'remaining_balance' => $this->remainingBalance,
             'requirements_valid_id_photo' => $validIdPath,
-            'gcash_reference_number' => $this->gcashReferenceNumber,
-            'gcash_receipt' => $receiptPath,
             'status' => 'pending',
         ]);
 
-         // Store user email in session for future bookings
+        // Store user email in session for future bookings
         session(['current_booking_email' => $this->guestEmail]);
-        session(['last_booking_email' => $this->guestEmail]); // Backup session key
+        session(['last_booking_email' => $this->guestEmail]);
 
-          // Send SMS to admin about new booking
+        // Send SMS to admin about new booking
         $this->sendNewBookingSMSToAdmin($booking);
 
         $this->showModal = false;
-        session()->flash('success','Booking submitted successfully! Please wait for admin confirmation.');
+        session()->flash('success', 'Booking submitted successfully! Please wait for admin confirmation.');
         $this->dispatch('bookingCreated');
-
     }
 
-    protected function sendNewBookingSMSToAdmin($booking)
+    // protected function sendNewBookingSMSToAdmin($booking)
+    // {
+    //     $skyioService = new SkyioService();
+    //     $adminPhone = env('ADMIN_PHONE_NUMBER');
+
+    //     if (!$adminPhone) {
+    //         \Log::warning('Admin phone number not set in environment variables.');
+    //         return;
+    //     }
+
+    //     $formattedAdminPhone = $this->formatPhoneNumber($adminPhone);
+
+    //     if (!str_starts_with($formattedAdminPhone, '+63') || strlen($formattedAdminPhone) !== 13) {
+    //         \Log::warning('Admin phone number format invalid. Required format: 09XXXXXXXXX');
+    //         return;
+    //     }
+
+    //     $carDetails = $this->car->brand . ' ' . $this->car->plate_number;
+    //     $paymentPlanText = $booking->payment_plan === 'downpayment' ? 'Downpayment' : 'Full Payment';
+        
+    //     $message =
+    //         "NEW BOOKING CONFIRMATION\n\n" .
+    //         "Booking Reference : #{$booking->id}\n" .
+    //         "Customer Name     : {$booking->guest_name}\n" .
+    //         "Vehicle Booked    : {$carDetails}\n" .
+    //         "Booking Dates     : " . Carbon::parse($booking->start_date)->format('M d, Y') .
+    //         " to " . Carbon::parse($booking->end_date)->format('M d, Y') . "\n" .
+    //         "Payment Plan      : {$paymentPlanText}\n" .
+    //         "Total Amount Due  : PHP " . number_format($booking->total_cost, 2) . "\n\n" .
+    //         // "Please review the booking details in the admin panel.";
+
+    //     $response = $skyioService->sendSMS($formattedAdminPhone, $message);
+
+    //     if (isset($response['error'])) {
+    //         \Log::error('Failed to send admin SMS: ' . $response['error']);
+    //     } else {
+    //         \Log::info('Admin notification SMS sent successfully');
+    //     }
+    // }
+
+      protected function sendNewBookingSMSToAdmin($booking)
     {
         $skyioService = new SkyioService();
         $adminPhone = env('ADMIN_PHONE_NUMBER');
@@ -245,30 +264,56 @@ class Booking extends Component
             return;
         }
 
-        // Format admin phone number
         $formattedAdminPhone = $this->formatPhoneNumber($adminPhone);
 
-        // Check if phone number is properly formatted
         if (!str_starts_with($formattedAdminPhone, '+63') || strlen($formattedAdminPhone) !== 13) {
             \Log::warning('Admin phone number format invalid. Required format: 09XXXXXXXXX');
             return;
         }
 
         $carDetails = $this->car->brand . ' ' . $this->car->plate_number;
-        $message =
-                "NEW BOOKING CONFIRMATION\n\n" .
-                "Booking Reference : #{$booking->id}\n" .
-                "Customer Name     : {$booking->guest_name}\n" .
-                "Vehicle Booked    : {$carDetails}\n" .
-                "Booking Dates     : " . Carbon::parse($booking->start_date)->format('M d, Y') .
-                " to " . Carbon::parse($booking->end_date)->format('M d, Y') . "\n" .
-                "Total Amount Due  : PHP " . number_format($booking->total_cost, 2) . "\n\n" .
-                "Please review the booking details in the admin panel.";
+        $paymentPlanText = $booking->payment_plan === 'downpayment' ? 'Downpayment' : 'Full Payment';
+        
+        // Build the message based on payment plan
+        $message = "NEW BOOKING CONFIRMATION\n\n" .
+            "Booking Reference : #{$booking->id}\n" .
+            "Customer Name     : {$booking->guest_name}\n" .
+            "Customer Phone    : {$booking->guest_phone_number}\n" .
+            "Vehicle Booked    : {$carDetails}\n" .
+            "Booking Dates     : " . Carbon::parse($booking->start_date)->format('M d, Y') .
+            " to " . Carbon::parse($booking->end_date)->format('M d, Y') . "\n" .
+            "Total Days        : {$booking->total_days} day(s)\n" .
+            "Payment Plan      : {$paymentPlanText}\n\n";
 
+        // Add payment details based on plan
+        if ($booking->payment_plan === 'downpayment') {
+            $message .= "PAYMENT BREAKDOWN:\n" .
+                "Downpayment       : PHP " . number_format($booking->downpayment_amount, 2) . "\n";
+            
+            if ($booking->operator_total_fee > 0) {
+                $message .= "Driver Fee        : PHP " . number_format($booking->operator_total_fee, 2) . "\n";
+            }
+            
+            $message .= "Amount Paid Now   : PHP " . number_format($booking->total_cost, 2) . "\n" .
+                "Remaining Balance : PHP " . number_format($booking->remaining_balance, 2) . "\n" .
+                "(To be paid on pickup)\n";
+        } else {
+            $message .= "PAYMENT BREAKDOWN:\n";
+            
+            $rentalCost = $booking->total_days * $this->car->price_per_day;
+            $message .= "Rental Cost       : PHP " . number_format($rentalCost, 2) . "\n";
+            
+            if ($booking->operator_total_fee > 0) {
+                $message .= "Driver Fee        : PHP " . number_format($booking->operator_total_fee, 2) . "\n";
+            }
+            
+            $message .= "Total Amount      : PHP " . number_format($booking->total_cost, 2) . "\n";
+        }
+
+        $message .= "\nPlease review the booking in the admin panel.";
 
         $response = $skyioService->sendSMS($formattedAdminPhone, $message);
 
-        // Log SMS response for debugging
         if (isset($response['error'])) {
             \Log::error('Failed to send admin SMS: ' . $response['error']);
         } else {
@@ -278,16 +323,12 @@ class Booking extends Component
 
     protected function formatPhoneNumber($phone)
     {
-        // Remove all non-digit characters
         $phone = preg_replace('/\D/', '', $phone);
         
-        // Validate if it matches 09 + 9 digits (11 digits total)
         if (strlen($phone) === 11 && str_starts_with($phone, '09')) {
-            // Convert 09171234567 to +639171234567
             return '+63' . substr($phone, 1);
         }
         
-        // If it doesn't match the required format, return as is (will likely fail SMS sending)
         return $phone;
     }
 

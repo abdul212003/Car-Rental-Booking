@@ -3,7 +3,7 @@
         @if ($showModal)
             <div wire:ignore.self class="modal fade show d-block" tabindex="-1" role="dialog"
                 aria-labelledby="bookingModalLabel" aria-hidden="false" style="background-color: rgba(0,0,0,0.5);">
-                <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-dialog modal-xl" role="document">
                     <div class="modal-content">
                         <div class="modal-header bg-dark text-white">
                             <h5 class="modal-title" id="bookingModalLabel">Book {{ $car->brand ?? '' }}
@@ -117,6 +117,10 @@
                                                     <span
                                                         class="text-primary fw-bold">₱{{ number_format($car->price_per_day, 2) }}</span>
                                                 </p>
+                                                <p class="mb-2"><strong>Downpayment:</strong>
+                                                    <span
+                                                        class="text-primary fw-bold">₱{{ number_format($car->downpayment, 2) }}</span>
+                                                </p>
 
                                                 <!-- Car Features -->
                                                 <div
@@ -159,6 +163,7 @@
 
                                         <div class="col-md-6">
                                             <!-- Booking Form Section -->
+                                            <!-- Booking Form Section - Replace your existing form fields -->
                                             <div class="booking-form-section">
                                                 <h6 class="mb-3"><i class="fas fa-clipboard-list me-2"></i>Booking
                                                     Information</h6>
@@ -205,8 +210,8 @@
                                                 </div>
 
                                                 <div class="form-group mb-3">
-                                                    <label for="operator" class="font-weight-bold">Operator Type
-                                                        <span class="text-danger">*</span></label>
+                                                    <label for="operator" class="font-weight-bold">Operator Type <span
+                                                            class="text-danger">*</span></label>
                                                     <select class="form-control" id="operator" wire:model="operator"
                                                         wire:change="calculateCost">
                                                         <option value="">-- Select Operator Type --</option>
@@ -219,15 +224,50 @@
                                                         <span class="text-danger small">{{ $message }}</span>
                                                     @enderror
 
-                                                    <!-- Display operator fee information -->
                                                     @if ($operatorFee > 0)
-                                                        <small class="text-info">
+                                                        <small class="text-info d-block mt-1">
                                                             <i class="fas fa-info-circle"></i> Driver fee:
                                                             ₱{{ number_format($operatorFee, 2) }} per day
                                                         </small>
                                                     @endif
                                                 </div>
 
+                                                <!-- PAYMENT PLAN SECTION -->
+                                                <div class="form-group mb-3">
+                                                    <label for="payment" class="font-weight-bold">Payment Plan <span
+                                                            class="text-danger">*</span></label>
+                                                    <select class="form-control" id="payment"
+                                                        wire:model="paymentPlan" wire:change="calculateCost">
+                                                        <option value="">-- Select Payment Plan --</option>
+                                                        <option value="downpayment">Downpayment Only
+                                                            (₱{{ number_format($car->downpayment ?? 0, 2) }})</option>
+                                                        <option value="full_payment">Full Payment (Per Day Rate)
+                                                        </option>
+                                                    </select>
+                                                    @error('paymentPlan')
+                                                        <span class="text-danger small">{{ $message }}</span>
+                                                    @enderror
+
+                                                    @if ($paymentPlan === 'downpayment')
+                                                        <div class="alert alert-info mt-2 small mb-0">
+                                                            <i class="fas fa-info-circle me-1"></i>
+                                                            <strong>Downpayment Plan:</strong> You will pay
+                                                            ₱{{ number_format($car->downpayment ?? 0, 2) }} now
+                                                            + driver fee (if applicable). The remaining balance will be
+                                                            paid upon vehicle pickup.
+                                                        </div>
+                                                    @elseif ($paymentPlan === 'full_payment')
+                                                        <div class="alert alert-info mt-2 small mb-0">
+                                                            <i class="fas fa-info-circle me-1"></i>
+                                                            <strong>Full Payment Plan:</strong> Total rental cost
+                                                            calculated based on number of days
+                                                            (₱{{ number_format($car->price_per_day ?? 0, 2) }} per day)
+                                                            + driver fee (if applicable).
+                                                        </div>
+                                                    @endif
+                                                </div>
+
+                                                <!-- DATE SELECTION -->
                                                 <div class="row mb-3">
                                                     <div class="col-md-6">
                                                         <div class="form-group">
@@ -253,45 +293,135 @@
                                                     </div>
                                                 </div>
 
+                                                <!-- COST SUMMARY -->
                                                 <div class="alert alert-info mb-3">
+                                                    <h6 class="fw-bold mb-2">
+                                                        <i class="fas fa-calculator me-1"></i> Booking Summary
+                                                    </h6>
+
                                                     <p class="mb-1"><strong>Total Days:</strong> {{ $totalDays }}
                                                     </p>
 
-                                                    <!-- Display cost breakdown -->
-                                                    @if ($operatorFee > 0)
+                                                    @if ($paymentPlan === 'downpayment')
+                                                        <hr class="my-2">
+                                                        <p class="mb-1">
+                                                            <strong>Downpayment:</strong>
+                                                            ₱{{ number_format($downpaymentAmount, 2) }}
+                                                        </p>
+
+                                                        @if ($operatorFee > 0)
+                                                            <p class="mb-1">
+                                                                <strong>Driver Fee:</strong>
+                                                                ₱{{ number_format($operatorFee * $totalDays, 2) }}
+                                                                <small
+                                                                    class="text-muted">(₱{{ number_format($operatorFee, 2) }}/day
+                                                                    × {{ $totalDays }} days)</small>
+                                                            </p>
+                                                        @endif
+
+                                                        <p class="mb-1 fw-bold text-primary fs-5">
+                                                            <strong>Total Due Now:</strong>
+                                                            ₱{{ number_format($totalCost, 2) }}
+                                                        </p>
+
+                                                        @if ($remainingBalance > 0)
+                                                            <hr class="my-2">
+                                                            <p class="mb-0 text-warning">
+                                                                <i class="fas fa-exclamation-triangle me-1"></i>
+                                                                <strong>Remaining Balance (Pay on Pickup):</strong>
+                                                                ₱{{ number_format($remainingBalance, 2) }}
+                                                            </p>
+                                                        @endif
+                                                    @elseif ($paymentPlan === 'full_payment')
+                                                        <hr class="my-2">
                                                         <p class="mb-1">
                                                             <strong>Car Rental:</strong>
-                                                            ₱{{ number_format($totalDays * $car->price_per_day, 2) }}
+                                                            ₱{{ number_format($totalDays * ($car->price_per_day ?? 0), 2) }}
+                                                            <small
+                                                                class="text-muted">(₱{{ number_format($car->price_per_day ?? 0, 2) }}/day
+                                                                × {{ $totalDays }} days)</small>
                                                         </p>
-                                                        <p class="mb-1">
-                                                            <strong>Driver Fee:</strong>
-                                                            ₱{{ number_format($operatorFee * $totalDays, 2) }}
+
+                                                        @if ($operatorFee > 0)
+                                                            <p class="mb-1">
+                                                                <strong>Driver Fee:</strong>
+                                                                ₱{{ number_format($operatorFee * $totalDays, 2) }}
+                                                                <small
+                                                                    class="text-muted">(₱{{ number_format($operatorFee, 2) }}/day
+                                                                    × {{ $totalDays }} days)</small>
+                                                            </p>
+                                                        @endif
+
+                                                        <p class="mb-0 fw-bold text-primary fs-5">
+                                                            <strong>Total Cost:</strong>
+                                                            ₱{{ number_format($totalCost, 2) }}
+                                                        </p>
+                                                    @else
+                                                        <hr class="my-2">
+                                                        <p class="mb-0 text-muted">
+                                                            <i class="fas fa-info-circle me-1"></i>
+                                                            Please select a payment plan to see cost breakdown
                                                         </p>
                                                     @endif
-
-                                                    <p class="mb-0 fw-bold fs-6">
-                                                        <strong>Total Cost:</strong>
-                                                        ₱{{ number_format($totalCost, 2) }}
-                                                    </p>
                                                 </div>
                                             </div>
 
                                             <!-- Continue with the rest of your form (Driver's License, Terms, GCash, etc.) -->
                                             <hr>
-
                                             <!-- Driver's License Upload Section -->
-                                            <h6 class="mt-3"><i class="fas fa-id-card me-2"></i> Driver's License
-                                            </h6>
-                                            <div class="form-group mb-3">
-                                                <label for="driversLicense" class="font-weight-bold">Upload Driver's
-                                                    License <span class="text-danger">*</span></label>
-                                                <input type="file" class="form-control" id="driversLicense"
-                                                    wire:model="requirements_valid_id_photo" accept="image/*,.pdf">
-                                                <small class="form-text text-muted">Upload a clear photo or scan of
-                                                    your valid driver's license (JPG or PNG)</small>
-                                                @error('requirements_valid_id_photo')
-                                                    <span class="text-danger small d-block">{{ $message }}</span>
-                                                @enderror
+                                            <div class="card border-0 shadow-sm mb-4">
+                                                <div class="card-body">
+                                                    <h6 class="card-title mb-3">
+                                                        <i class="fas fa-id-card text-primary me-2"></i> Driver's
+                                                        License
+                                                    </h6>
+
+                                                    <div class="mb-3">
+                                                        <label class="form-label fw-semibold">
+                                                            Upload Driver's License
+                                                            <span class="text-danger">*</span>
+                                                        </label>
+
+                                                        <div class="upload-area-license border-2 border-dashed rounded-3 p-4 text-center bg-light"
+                                                            onclick="document.getElementById('driversLicense').click()"
+                                                            style="cursor: pointer; border-color: #dee2e6;">
+                                                            <i
+                                                                class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
+                                                            <p class="mb-2 fw-semibold">Click to upload or drag and
+                                                                drop</p>
+                                                            <p class="text-muted small mb-0">JPG, PNG or PDF (Max 5MB)
+                                                            </p>
+                                                        </div>
+
+                                                        <input type="file"
+                                                            class="d-none @error('requirements_valid_id_photo') is-invalid @enderror"
+                                                            id="driversLicense"
+                                                            wire:model="requirements_valid_id_photo"
+                                                            accept="image/*,.pdf"
+                                                            onchange="displayLicenseFileName(this)">
+
+                                                        <div id="licenseFileName" class="mt-2 small text-muted"></div>
+                                                        @if ($requirements_valid_id_photo)
+                                                            <div class="mt-3">
+                                                                <label
+                                                                    class="form-label small text-muted">Preview:</label>
+                                                                <div
+                                                                    class="border rounded-3 p-2 bg-white d-inline-block">
+                                                                    <img src="{{ $requirements_valid_id_photo->temporaryUrl() }}"
+                                                                        class="img-fluid rounded"
+                                                                        style="max-height: 150px; max-width: 100%;">
+                                                                </div>
+                                                            </div>
+                                                        @endif
+
+                                                        @error('requirements_valid_id_photo')
+                                                            <div class="text-danger small mt-2">
+                                                                <i
+                                                                    class="fas fa-exclamation-circle me-1"></i>{{ $message }}
+                                                            </div>
+                                                        @enderror
+                                                    </div>
+                                                </div>
                                             </div>
                                             <hr>
 
@@ -418,42 +548,6 @@
                                                     <span class="text-danger small d-block">{{ $message }}</span>
                                                 @enderror
                                             </div>
-
-                                            <!-- GCash Payment Section -->
-                                            <h6 class="mt-3"><i class="fas fa-mobile-alt me-2"></i> GCash Payment
-                                            </h6>
-                                            <p class="small text-muted mb-2">Send payment to: <span
-                                                    class="fw-bolder fs-6">AN***E JA**S V.</span>
-                                                <strong>(09952184322)</strong>
-                                            </p>
-
-                                            <div class="form-group mb-3">
-                                                <label for="gcashReferenceNumber" class="font-weight-bold">GCash
-                                                    Reference Number (13 digits) <span
-                                                        class="text-danger">*</span></label>
-                                                <input type="number" class="form-control" id="gcashReferenceNumber"
-                                                    wire:model="gcashReferenceNumber"
-                                                    placeholder="e.g., 1234567890123"
-                                                    oninput="if(this.value.length > 13) this.value = this.value.slice(0, 13);">
-                                                @error('gcashReferenceNumber')
-                                                    <span class="text-danger small">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-
-                                            <div class="form-group mb-3">
-                                                <label for="gcashReceipt" class="font-weight-bold">Upload GCash
-                                                    Receipt <span class="text-danger">*</span></label>
-                                                <input type="file" class="form-control" id="gcashReceipt"
-                                                    wire:model="gcashReceipt" accept="image/*">
-                                                @error('gcashReceipt')
-                                                    <span class="text-danger small">{{ $message }}</span>
-                                                @enderror
-                                                @if ($gcashReceipt)
-                                                    <img src="{{ $gcashReceipt->temporaryUrl() }}"
-                                                        class="img-fluid mt-2 rounded border"
-                                                        style="max-height: 100px;">
-                                                @endif
-                                            </div>
                                         </div>
                                     </div>
 
@@ -475,6 +569,25 @@
 
     <!-- Add this script to handle carousel interactions -->
     <script>
+        function displayGcashFileName(input) {
+            const fileNameDiv = document.getElementById('gcashFileName');
+            if (input.files && input.files[0]) {
+                const fileName = input.files[0].name;
+                const fileSize = (input.files[0].size / 1024 / 1024).toFixed(2);
+                fileNameDiv.innerHTML =
+                    `<i class="fas fa-file-image me-1"></i> <strong>${fileName}</strong> (${fileSize} MB)`;
+            }
+        }
+
+        function displayLicenseFileName(input) {
+            const fileNameDiv = document.getElementById('licenseFileName');
+            if (input.files && input.files[0]) {
+                const fileName = input.files[0].name;
+                const fileSize = (input.files[0].size / 1024 / 1024).toFixed(2);
+                fileNameDiv.innerHTML =
+                    `<i class="fas fa-file-alt me-1"></i> <strong>${fileName}</strong> (${fileSize} MB)`;
+            }
+        }
         document.addEventListener('DOMContentLoaded', function() {
             // Update active thumbnail when carousel slides
             var carousel = document.getElementById('carImageCarousel');
@@ -506,6 +619,16 @@
     </script>
 
     <style>
+        .upload-area:hover {
+            background-color: #e9ecef !important;
+            border-color: #0d6efd !important;
+        }
+
+        .upload-area-license:hover {
+            background-color: #e9ecef !important;
+            border-color: #0d6efd !important;
+        }
+
         .active-thumbnail {
             border: 2px solid #0d6efd !important;
         }

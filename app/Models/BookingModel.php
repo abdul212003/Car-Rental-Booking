@@ -24,11 +24,14 @@ class BookingModel extends Model
         'total_days',
         'total_cost',
         'requirements_valid_id_photo',
-        'gcash_reference_number',
-        'gcash_receipt',
+        // 'gcash_reference_number',
+        // 'gcash_receipt',
         'status',
         'rented_out_at',
         'returned_at',
+        'payment_plan',
+        'downpayment_amount',
+        'remaining_balance',
     ];
 
     protected $casts = [

@@ -13,7 +13,7 @@ class AddCars extends Component
 {
     use WithPagination, WithFileUploads;
 
-    public $carId,$color,$plate_number, $brand,$transmission,$setting_capacity,$fuel, $year, $price_per_day, $status = 'available', $image,$interior_image,$additional_image, $existingImage,$existingInteriorImage,$existingAdditionalImage;
+    public $carId,$color,$plate_number, $brand,$transmission,$setting_capacity,$fuel, $year, $price_per_day , $downpayment, $status = 'available', $image,$interior_image,$additional_image, $existingImage,$existingInteriorImage,$existingAdditionalImage;
     public $showModal = false, $modalTitle = 'Add New Car', $editMode = false;
 
     // Search and Filter properties
@@ -35,6 +35,7 @@ class AddCars extends Component
             'setting_capacity'  => 'required|string|max:255',
             'fuel'  => 'required|string|max:255',
             'year'   => ['required', 'integer', 'min:1900', 'max:' . (date('Y') + 1)],
+            'downpayment' => 'required|numeric|min:0',
             'price_per_day' => 'required|numeric|min:0',
             'status' => 'required|in:available,unavailable',
             'image'  => 'nullable|image|max:2048',
@@ -63,6 +64,7 @@ class AddCars extends Component
         $this->setting_capacity = $car->setting_capacity;
         $this->fuel = $car->fuel;
         $this->year = $car->year;
+        $this->downpayment = $car->downpayment;
         $this->price_per_day = $car->price_per_day;
         $this->status = $car->status;
         
@@ -126,6 +128,7 @@ class AddCars extends Component
             'setting_capacity' => $this->setting_capacity,
             'fuel' => $this->fuel,
             'year' => $this->year,
+            'downpayment' => $this->downpayment,
             'price_per_day' => $this->price_per_day,
             'status' => $this->status,
         ];
@@ -161,7 +164,7 @@ class AddCars extends Component
     {
         $this->reset([
             'carId','color','plate_number' ,'brand','transmission', 'setting_capacity', 
-            'fuel','year', 'price_per_day', 'status',
+            'fuel','year', 'price_per_day','downpayment', 'status',
             'image', 'interior_image', 'additional_image',
             'existingImage', 'existingInteriorImage', 'existingAdditionalImage'
         ]);

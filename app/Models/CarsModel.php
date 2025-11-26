@@ -23,6 +23,7 @@ class CarsModel extends Model
         'fuel',
         'year',
         'price_per_day',
+        'downpayment',
         'image',
         'interior_image',
         'additional_image',

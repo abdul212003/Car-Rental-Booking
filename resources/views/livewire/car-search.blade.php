@@ -30,15 +30,6 @@
                                     placeholder="Search brand...">
                             </div>
                         </div>
-
-                        {{-- <div class="col-md-4">
-                            <label class="form-label fw-semibold">Max Price</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-light border-end-0">₱</span>
-                                <input type="number" wire:model.live="searchPrice" class="form-control"
-                                    placeholder="Max price per day">
-                            </div>
-                        </div> --}}
                     </div>
 
                     <div class="mt-4 d-flex justify-content-between align-items-center">
@@ -56,116 +47,24 @@
     </div>
 
     <!-- Car Grid -->
-    {{-- <div class="row g-4">
-        @forelse ($cars as $car)
-            <div class="col-md-6 col-lg-4 col-xl-3">
-                <div class="card h-100 shadow-sm border-0 overflow-hidden car-card">
-                    <!-- Car Image with Status Badge -->
-                    <div class="position-relative">
-                        <img src="{{ $car->image ? asset('storage/' . $car->image) : asset('storage/images/placeholder-car.jpg') }}"
-                            class="card-img-top" alt="{{ $car->brand }} {{ $car->model }}"
-                            style="height: 200px; object-fit: cover;">
-
-                        @php
-                            // Check if search dates are provided
-                            $isAvailable = true;
-                            $statusText = 'Available';
-                            $statusClass = 'bg-success';
-
-                            if (!empty($searchStartDate) && !empty($searchEndDate)) {
-                                $isAvailable = $car->isAvailable($searchStartDate, $searchEndDate);
-                                $statusText = $isAvailable ? 'Available' : 'Unavailable';
-                                $statusClass = $isAvailable ? 'bg-success' : 'bg-danger';
-                            }
-                        @endphp
-
-                        <span class="position-absolute top-0 end-0 m-2 badge {{ $statusClass }} fs-6">
-                            <i class="fas fa-circle me-1 small"></i> {{ $statusText }}
-                        </span>
-                    </div>
-
-                    <div class="card-body d-flex flex-column p-3">
-                        <!-- Car Details -->
-                        <h5 class="card-title mb-2">{{ $car->brand }} {{ $car->model }}</h5>
-                        <p class="text-muted small mb-3">{{ $car->year }} • {{ $car->fuel }} •
-                            {{ $car->transmission }}</p>
-
-                        <div class="mb-3">
-                            <div class="d-flex align-items-center mb-2">
-                                <i class="fas fa-tag text-primary me-2"></i>
-                                <span class="fw-bold fs-5 text-dark">₱{{ number_format($car->price_per_day, 2) }}
-                                    <small class="text-muted">/day</small></span>
-                            </div>
-
-                            <!-- Car Features -->
-                            <div class="d-flex justify-content-between text-muted small mt-2">
-                                <span>
-                                    <i class="fas fa-gas-pump me-1"></i> {{ $car->fuel }}
-                                </span>
-                                <span>
-                                    <i class="fas fa-cog me-1"></i> {{ $car->transmission }}
-                                </span>
-                                <span>
-                                    <i class="fas fa-user me-1"></i> {{ $car->setting_capacity }}
-                                </span>
-                            </div>
-                        </div>
-
-                        <!-- Book Button -->
-                        <div class="mt-auto">
-                            @if ($isAvailable)
-                                <button
-                                    class="btn btn-primary w-100 d-flex align-items-center justify-content-center py-2"
-                                    wire:click="$dispatch('openBookingModal', { carId: {{ $car->id }} })">
-                                    <i class="fas fa-calendar-check me-2"></i> Book Now
-                                </button>
-                            @else
-                                <button
-                                    class="btn btn-secondary w-100 d-flex align-items-center justify-content-center py-2"
-                                    disabled>
-                                    <i class="fas fa-calendar-times me-2"></i> Unavailable
-                                </button>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-            </div>
-        @empty
-            <!-- Empty State -->
-            <div class="col-12">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body text-center py-5">
-                        <i class="fas fa-search fa-3x text-muted mb-3"></i>
-                        <h4 class="text-muted mb-2">No cars found</h4>
-                        <p class="text-muted mb-4">We couldn't find any cars matching your criteria.</p>
-                        <button class="btn btn-primary" wire:click="resetFilters">
-                            <i class="fas fa-undo me-1"></i> Reset Filters
-                        </button>
-                    </div>
-                </div>
-            </div>
-        @endforelse
-    </div> --}}
-
-    <!-- Car Grid -->
     <div class="row g-4">
         @forelse ($cars as $car)
             @php
-                // Get button state for this car using the new method
+                // Get button state for this car
                 $buttonState = $this->getCarButtonState($car);
 
-                // Status badge logic - prioritize admin-set status
+                // Status badge logic - show booking status for all users
                 if ($car->status === 'unavailable') {
                     $statusText = 'Unavailable';
                     $statusClass = 'bg-danger';
-                } elseif ($buttonState['user_booked']) {
+                } elseif ($buttonState['is_booked']) {
                     $statusText = 'Booked';
                     $statusClass = 'bg-warning';
                 } elseif ($buttonState['available']) {
                     $statusText = 'Available';
                     $statusClass = 'bg-success';
                 } else {
-                    $statusText = 'Unavailable for Dates';
+                    $statusText = 'Unavailable';
                     $statusClass = 'bg-secondary';
                 }
             @endphp
@@ -186,7 +85,7 @@
                     <div class="card-body d-flex flex-column p-3">
                         <!-- Car Details -->
                         <h5 class="card-title mb-2">{{ $car->brand }} <span
-                                class="badge bg-secondary">{{ $car->color }} </span></h5>
+                                class="badge bg-secondary">{{ $car->color }}</span></h5>
                         <p class="text-muted small mb-3">{{ $car->year }} • {{ $car->fuel }} •
                             {{ $car->transmission }} • <span class="fw-bolder">{{ $car->plate_number }}</span></p>
 
@@ -195,6 +94,11 @@
                                 <i class="fas fa-tag text-primary me-2"></i>
                                 <span class="fw-bold fs-5 text-dark">₱{{ number_format($car->price_per_day, 2) }}
                                     <small class="text-muted">/day</small></span>
+                            </div>
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-tag text-primary me-2"></i>
+                                <span class="fw-bold fs-5 text-dark">₱{{ number_format($car->downpayment, 2) }}
+                                    <small class="text-muted">/down</small></span>
                             </div>
 
                             <!-- Car Features -->
@@ -211,7 +115,7 @@
                             </div>
                         </div>
 
-                        <!-- Updated Book Button with Dynamic State -->
+                        <!-- Book Button with Dynamic State -->
                         <div class="mt-auto">
                             <button
                                 class="btn {{ $buttonState['class'] }} w-100 d-flex align-items-center justify-content-center py-2"
@@ -220,10 +124,10 @@
                                 <i class="{{ $buttonState['icon'] }} me-2"></i> {{ $buttonState['text'] }}
                             </button>
 
-                            @if ($buttonState['user_booked'])
-                                <small class="text-muted d-block mt-1 text-center">
+                            @if ($buttonState['is_booked'])
+                                <small class="text-warning d-block mt-2 text-center fw-semibold">
                                     <i class="fas fa-info-circle me-1"></i>
-                                    You have an existing booking for these dates
+                                    This car is already booked for the selected dates
                                 </small>
                             @endif
                         </div>

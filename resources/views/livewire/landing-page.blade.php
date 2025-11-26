@@ -11,7 +11,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#home">Home</a>
+                        <a class="nav-link" href="#home">Home</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#about">About Us</a>
@@ -21,6 +21,9 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#contact">Contact Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/user/payment">Payment</a>
                     </li>
                 </ul>
             </div>
@@ -79,7 +82,7 @@
                     <h2 class="mb-4">About RJ Car Rentals</h2>
                     <p class="lead mb-4">We've been providing premium car rental services since 2021, with a commitment
                         to excellence and customer satisfaction.</p>
-                    <p class="mb-4">Our mission is to make luxury car rentals accessible to everyone. With a diverse
+                    <p class="mb-4">Our mission is to make car rentals accessible to everyone. With a diverse
                         fleet of well-maintained vehicles and a team of dedicated professionals, we ensure that every
                         rental experience is seamless and memorable.</p>
                     <p class="mb-5">Whether you need a car for business, leisure, or a special occasion, RJ Car
@@ -340,3 +343,11 @@
         </footer>
 
 </div>
+<script>
+    document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
+        link.addEventListener('click', function() {
+            document.querySelector('.navbar-nav .active')?.classList.remove('active');
+            this.classList.add('active');
+        });
+    });
+</script>

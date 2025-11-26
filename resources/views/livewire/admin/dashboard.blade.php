@@ -57,6 +57,24 @@
                 </div>
             </div>
         </div>
+
+        <!-- Payment -->
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card shadow-sm border-0 rounded-3 h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="fs-2 fw-bold mb-1">{{ $paymentCount }}</div>
+                            <div class="text-muted fw-medium small">Payment</div>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-center rounded-3 bg-info bg-opacity-25 text-info"
+                            style="width:60px; height:60px;">
+                            <i class="bi bi-credit-card fs-3"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Returned -->
@@ -148,7 +166,9 @@
         </div>
     </div>
 
-
+    <div class="mt-4">
+        <livewire:admin.income-chart />
+    </div>
     {{-- <!-- Recent Activity -->
     <div class="bg-white rounded-3 shadow-sm p-4">
         <div class="recent-activity">

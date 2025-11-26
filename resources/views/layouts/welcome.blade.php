@@ -94,7 +94,7 @@
 
         /* Hero Section */
         .hero-section {
-            background: linear-gradient(rgba(26, 26, 46, 0.8), rgba(26, 26, 46, 0.8)), url('images/landing-pic.avif');
+            background: linear-gradient(rgba(26, 26, 46, 0.8), rgba(26, 26, 46, 0.8)), url('images/b-img2.jpg');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;

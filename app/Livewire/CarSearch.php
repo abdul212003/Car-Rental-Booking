@@ -25,100 +25,52 @@ class CarSearch extends Component
      */
     public function refreshComponent()
     {
-        // This will trigger a re-render and update button states
         $this->render();
     }
 
-
-     /**
-     * Check if the current user has already booked this car for the selected dates
+    /**
+     * Check if ANY user has booked this car for the selected dates
+     * (For guest users without login)
      */
-    public function hasUserBookedCar($carId)
+    public function isCarBookedByAnyone($carId)
     {
-
-        // Get current user - adjust this based on your authentication system
-        $userIdentifier = $this->getCurrentUserIdentifier();
-
-        // If no user identifier is available, we can't check
-        if(!$userIdentifier)
-        {
-            return false;
-        }
-
-         // If no search dates are provided, check for any active bookings by this user
+        // If no search dates provided, check for any active bookings
         if (empty($this->searchStartDate) || empty($this->searchEndDate)) {
             return BookingModel::where('car_id', $carId)
-                ->where($this->getUserIdentifierColumn(), $userIdentifier)
-                ->whereIn('status', ['confirmed', 'pending'])
+                ->whereIn('status', ['confirmed', 'pending','in_progress'])
                 ->exists();
         }
 
-        // Check if user has any bookings for this car that overlap with selected dates
-        $existingBooking = BookingModel::where('car_id', $carId)
-            ->where($this->getUserIdentifierColumn() ,$userIdentifier)
-            ->where(function ($query) 
-            {
-                $query->where(function ($q)
-                {
-                    // New booking starts during existing booking
+        // Check if there are any bookings that overlap with selected dates
+        $hasBooking = BookingModel::where('car_id', $carId)
+            ->where(function ($query) {
+                $query->where(function ($q) {
+                    // Booking starts during selected period
                     $q->where('start_date', '<=', $this->searchStartDate)
-                        ->where('end_date', '>=', $this->searchStartDate);
-                })->orWhere(function ($q)
-                {
-                    // New booking ends during existing booking
-                    $q->where('start_date', '<=',  $this->searchEndDate)
-                        ->where('end_date', '>=',  $this->searchEndDate);
-                })->orWhere(function ($q)
-                {
-                    // New booking ends during existing booking
+                      ->where('end_date', '>=', $this->searchStartDate);
+                })->orWhere(function ($q) {
+                    // Booking ends during selected period
+                    $q->where('start_date', '<=', $this->searchEndDate)
+                      ->where('end_date', '>=', $this->searchEndDate);
+                })->orWhere(function ($q) {
+                    // Booking is completely within selected period
                     $q->where('start_date', '>=', $this->searchStartDate)
-                        ->where('end_date', '<=', $this->searchEndDate);
+                      ->where('end_date', '<=', $this->searchEndDate);
                 });
-            }) ->whereIn('status', ['confirmed', 'pending']) // Only check active bookings
+            })
+            ->whereIn('status', ['confirmed', 'pending','in_progress'])
             ->exists();
-        return $existingBooking;
+
+        return $hasBooking;
     }
 
     /**
-     * Get current user identifier for guest users (no login required)
-     */
-    private function getCurrentUserIdentifier()
-    {
-        // For guest booking system, try to get email from session
-        // This assumes you store the user's email when they start booking
-        if (session()->has('current_booking_email')) {
-            return session('current_booking_email');
-        }
-
-        // Alternative: get from cookie if you store it there
-        if (request()->hasCookie('booking_user_email')) {
-            return request()->cookie('booking_user_email');
-        }
-
-        // Check if there's a recently completed booking in this session
-        if (session()->has('last_booking_email')) {
-            return session('last_booking_email');
-        }
-
-        return null;
-    }
-
-    /**
-     * Get the column name for user identification in bookings table
-     */
-    private function getUserIdentifierColumn()
-    {
-        // Since no login required, we use guest_email
-        return 'guest_email';
-    }
-
-        /**
      * Get button state and styling for a car
      */
     public function getCarButtonState($car)
     {
         $isAvailable = true;
-        $hasUserBooked = false;
+        $isBooked = false;
         $buttonText = 'Book Now';
         $buttonClass = 'btn-primary';
         $buttonIcon = 'fas fa-calendar-check';
@@ -128,7 +80,7 @@ class CarSearch extends Component
         if ($car->status === 'unavailable') {
             $buttonText = 'Unavailable';
             $buttonClass = 'btn-secondary';
-            $buttonIcon = 'fas fa-calendar-times';
+            $buttonIcon = 'fas fa-ban';
             $isDisabled = true;
             
             return [
@@ -137,28 +89,28 @@ class CarSearch extends Component
                 'icon' => $buttonIcon,
                 'disabled' => $isDisabled,
                 'available' => false,
-                'user_booked' => false
+                'is_booked' => false
             ];
         }
 
-        // Check if user has already booked this car (regardless of dates initially)
-        $hasUserBooked = $this->hasUserBookedCar($car->id);
+        // Check if car is already booked by anyone
+        $isBooked = $this->isCarBookedByAnyone($car->id);
 
         // Check availability for selected dates if provided
         if (!empty($this->searchStartDate) && !empty($this->searchEndDate)) {
             $isAvailable = $car->isAvailable($this->searchStartDate, $this->searchEndDate);
         }
 
-        // Determine button state based on conditions
-        if ($hasUserBooked) {
+        // Determine button state
+        if ($isBooked) {
             $buttonText = 'Already Booked';
             $buttonClass = 'btn-warning';
-            $buttonIcon = 'fas fa-check-circle';
+            $buttonIcon = 'fas fa-calendar-times';
             $isDisabled = true;
         } elseif (!$isAvailable && !empty($this->searchStartDate) && !empty($this->searchEndDate)) {
-            $buttonText = 'Unavailable for Selected Dates';
+            $buttonText = 'Unavailable';
             $buttonClass = 'btn-secondary';
-            $buttonIcon = 'fas fa-calendar-times';
+            $buttonIcon = 'fas fa-times-circle';
             $isDisabled = true;
         }
 
@@ -168,7 +120,7 @@ class CarSearch extends Component
             'icon' => $buttonIcon,
             'disabled' => $isDisabled,
             'available' => $isAvailable,
-            'user_booked' => $hasUserBooked
+            'is_booked' => $isBooked
         ];
     }
     
@@ -183,30 +135,18 @@ class CarSearch extends Component
             });
         }
 
-        // Apply price filter
-        // if (!empty($this->searchPrice)) {
-        //     $query->where('price_per_day', '<=', $this->searchPrice);
-        // }
-        //  else 
-        // {
-        //     // Always show available cars by default
-        //     $query->whereIn('status' , ['available','unavailable']);
-        // }
-
-        // // Apply availability filter based on dates
-        // if (!empty($this->searchStartDate) && !empty($this->searchEndDate)) {
-        //      $query->availableBetween($this->searchStartDate, $this->searchEndDate);
-        // }
-       
-
         $cars = $query->paginate(8);
 
-        return view('livewire.car-search',['cars' => $cars,'searchStartDate' => $this->searchStartDate,'searchEndDate' => $this->searchEndDate])->layout('layouts.search-car');
+        return view('livewire.car-search', [
+            'cars' => $cars,
+            'searchStartDate' => $this->searchStartDate,
+            'searchEndDate' => $this->searchEndDate
+        ])->layout('layouts.search-car');
     }
 
     public function resetFilters()
     {
-        $this->reset(['searchBrand','searchPrice','searchStartDate','searchEndDate']);
+        $this->reset(['searchBrand']);
         $this->resetPage();
     }
 }
